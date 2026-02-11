@@ -1,0 +1,84 @@
+# Fit Check — Cursor Rules
+
+## Project Overview
+Fit Check is a Chrome extension (Manifest V3) that helps menswear shoppers understand how garments will fit their body. It uses published garment measurements + user body measurements to generate descriptive, non-prescriptive fit interpretations.
+
+## Tech Stack
+- **Framework:** WXT (Web Extension Tools) for Chrome extension scaffolding
+- **Language:** TypeScript (strict mode)
+- **UI:** React + Tailwind CSS
+- **Storage:** Chrome Storage API (local) for user measurements
+- **External API:** Anthropic Claude API for size chart extraction from screenshots + HTML
+- **Build:** Vite (via WXT)
+- **Package Manager:** npm
+
+## Architecture Rules
+
+### File Organization
+- Keep files small and focused. No file should exceed 200 lines. If it does, split it.
+- One component per file. One utility function group per file.
+- All fit evaluation logic lives in `src/lib/fit-engine/`. This is the core calculation engine and must stay pure (no UI, no API calls, no side effects).
+- All Chrome extension specific code (background scripts, content scripts, popup) lives in the WXT entrypoints structure.
+- All React UI components live in `src/components/`.
+- All types/interfaces live in `src/types/`.
+- Shared utilities live in `src/lib/utils/`.
+
+### Code Style
+- Use TypeScript strict mode. No `any` types. No `@ts-ignore`.
+- All functions must have explicit return types.
+- All fit evaluation functions must be pure functions: same inputs always produce same outputs. No side effects.
+- Use descriptive variable names. `chestEase` not `ce`. `garmentFrontLength` not `gfl`.
+- Comments should explain WHY, not WHAT. The code should be readable enough to explain what it does.
+- Error handling: every async operation must have try/catch. Surface errors to the user with helpful messages, never silently fail.
+
+### Fit Engine Rules
+- The fit engine is the most important part of the codebase. Treat it with extreme care.
+- Every calculation must match the equations in `docs/master-tables.md` exactly. If you're unsure, ask — do not guess.
+- Category boundaries must match the master tables precisely. Off-by-one errors in ranges will produce wrong fit results.
+- All category labels and universal meanings must be pulled from the master tables, not invented.
+- The fit engine must never contain UI logic, API calls, or Chrome extension APIs.
+- Every fit evaluation function should be independently testable.
+
+### State Management
+- User measurements stored in Chrome Storage local. Read on extension activation, cached in memory.
+- Garment data is ephemeral — exists only for the current evaluation session.
+- No global mutable state. Use React state management within components.
+
+### Chrome Extension Rules
+- Manifest V3 only. No Manifest V2 patterns.
+- Minimal permissions. Request only what is needed.
+- Content script should inject a minimal UI overlay. Heavy logic stays in background or popup.
+- All API calls (Claude) go through the background service worker, never from content scripts directly.
+
+## Communication Rules
+
+### Status Reports
+After completing any task, provide a status report:
+```
+## Status Report
+**Task:** [What was requested]
+**Files Changed:**
+- `path/to/file.ts` — [What changed and why]
+- `path/to/file.ts` — [What changed and why]
+**What to Test:** [How the user can verify this works — in plain English, describe what they should see/click/experience]
+**Potential Issues:** [Anything that might not work or needs attention]
+```
+
+### When Uncertain
+- If a requirement is ambiguous, ask before implementing. Do not guess.
+- If a fit calculation doesn't match the master tables, flag it immediately.
+- If a change would affect more than 5 files, stop and ask for confirmation before proceeding.
+
+### Documentation
+- Reference `docs/product-brief.md` for product decisions and scope.
+- Reference `docs/master-tables.md` for all fit calculation logic, categories, and meanings.
+- If you notice documentation that doesn't match the code, flag it — do not silently resolve the discrepancy.
+
+## What NOT to Do
+- Do not recommend sizes or use words like "ideal," "correct," "proper," or "should" in any user-facing text.
+- Do not add features not described in the product brief without explicit approval.
+- Do not refactor working code unless asked. Focus on the task at hand.
+- Do not write console.log statements. Use a proper logger if debugging is needed.
+- Do not use `any` type in TypeScript. Define proper interfaces.
+- Do not create files longer than 200 lines without splitting.
+- Do not make changes to the fit engine without verifying against master-tables.md.
