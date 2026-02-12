@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Base styles for landing page */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #213547;
+}
