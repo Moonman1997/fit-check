@@ -63,12 +63,20 @@ function MeasurementForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    getUserMeasurements().then((stored) => {
-      if (stored) {
-        setValues(stored);
+    async function load() {
+      try {
+        const stored = await getUserMeasurements();
+        if (stored) {
+          setValues(stored);
+        }
+      } catch (err) {
+        console.error(err);
+        setErrorMessage('Could not load measurements.');
+      } finally {
+        setLoaded(true);
       }
-      setLoaded(true);
-    });
+    }
+    load();
   }, []);
 
   useEffect(() => {
@@ -83,7 +91,7 @@ function MeasurementForm() {
     setErrorMessage(null);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrorMessage(null);
 
@@ -96,9 +104,13 @@ function MeasurementForm() {
       return;
     }
 
-    saveUserMeasurements(values).then(() => {
+    try {
+      await saveUserMeasurements(values);
       setSuccessMessage(true);
-    });
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('Could not save measurements. Please try again.');
+    }
   }
 
   if (!loaded) {
