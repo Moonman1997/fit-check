@@ -63,7 +63,7 @@ fit-check/
 
 ## Phase 0: Project Scaffolding
 **Goal:** Empty WXT + React + TypeScript + Tailwind project that loads as a Chrome extension
-**Files touched:** wxt.config.ts, package.json, tsconfig.json, tailwind.config.ts, src/popup/Popup.tsx
+**Files touched:** wxt.config.ts, package.json, tsconfig.json, tailwind.config.ts, entrypoints/popup/Popup.tsx
 
 **What to build:**
 - Initialize WXT project with React template
@@ -82,7 +82,7 @@ After this phase, you can load the extension in Chrome. When you click the exten
 
 ## Phase 1: Storage Layer + Types
 **Goal:** Define all TypeScript types and build Chrome storage helpers
-**Files touched:** src/lib/types.ts, src/lib/storage.ts
+**Files touched:** lib/types.ts, lib/storage.ts
 
 **What to build:**
 - `types.ts`: UserMeasurements interface (7 fields), GarmentMeasurements interface (tops + bottoms), ExtractionResult, ScorecardResult, FitCategory types
@@ -99,7 +99,7 @@ No visible change yet. This creates the data definitions and storage functions e
 
 ## Phase 2: Landing Page (Profile + Instructions)
 **Goal:** Full-page tab with measurement entry form and instructions
-**Files touched:** src/landing/Landing.tsx, src/landing/components/MeasurementForm.tsx, src/landing/components/Instructions.tsx
+**Files touched:** entrypoints/landing/Landing.tsx, entrypoints/landing/components/MeasurementForm.tsx, entrypoints/landing/components/Instructions.tsx
 
 **What to build:**
 - Full-page tab that opens when navigating to the extension's landing URL
@@ -122,7 +122,7 @@ After this phase, you can open the landing page tab and enter your body measurem
 
 ## Phase 3: Popup Router (Conditional UI)
 **Goal:** Extension icon popup shows different content based on whether measurements exist
-**Files touched:** src/popup/Popup.tsx, src/popup/popup.css, src/background/index.ts
+**Files touched:** entrypoints/popup/Popup.tsx, entrypoints/popup/popup.css, entrypoints/index.ts
 
 **What to build:**
 - **State 1 (no measurements):** Message "Add your measurements to use Fit Check" + CTA button that opens landing page tab
@@ -144,7 +144,7 @@ After this phase, clicking the extension icon shows one of two views. If you hav
 
 ## Phase 4: Fit Calculation Engine
 **Goal:** Implement all deterministic fit math from master-tables.md as pure functions
-**Files touched:** src/lib/calculations.ts, src/lib/categories.ts, src/lib/callouts.ts
+**Files touched:** lib/calculations.ts, lib/categories.ts, lib/callouts.ts
 
 **What to build:**
 - `calculations.ts`: Pure functions for each measurement:
@@ -177,7 +177,7 @@ No visible change to the extension. This builds all the math that turns garment 
 
 ## Phase 5: Side Panel Shell + Scorecard UI
 **Goal:** Chrome side panel opens and displays a scorecard (using hardcoded test data initially)
-**Files touched:** src/sidepanel/SidePanel.tsx, src/sidepanel/components/SizeSelector.tsx, src/sidepanel/components/ScorecardTable.tsx, src/sidepanel/components/FabricNote.tsx
+**Files touched:** entrypoints/sidepanel/SidePanel.tsx, entrypoints/sidepanel/components/SizeSelector.tsx, entrypoints/sidepanel/components/ScorecardTable.tsx, entrypoints/sidepanel/components/FabricNote.tsx
 
 **What to build:**
 - Register side panel in WXT config
@@ -202,7 +202,7 @@ After this phase, you can manually trigger the side panel and see a full scoreca
 
 ## Phase 6: Page Capture + Claude API Extraction
 **Goal:** Capture screenshot + HTML from current tab, send to Claude API, get structured measurements back
-**Files touched:** src/content/index.ts, src/background/index.ts, src/lib/extraction.ts
+**Files touched:** entrypoints/index.ts, entrypoints/index.ts, lib/extraction.ts
 
 **What to build:**
 - `content/index.ts`: Content script that captures page HTML (full DOM including hidden elements where possible) and sends to background
@@ -236,7 +236,7 @@ After this phase, clicking "Analyze This Page" on a product page will: capture a
 
 ## Phase 7: Wire Everything Together
 **Goal:** Connect extraction → calculations → scorecard display as a complete end-to-end flow
-**Files touched:** src/background/index.ts, src/sidepanel/SidePanel.tsx
+**Files touched:** entrypoints/index.ts, entrypoints/sidepanel/SidePanel.tsx
 
 **What to build:**
 - Background service worker: after extraction returns, run all applicable calculations against user measurements
@@ -261,7 +261,7 @@ This is the moment of truth. After this phase, the full flow works: you click "A
 
 ## Phase 8: Extraction Prompt Tuning + Edge Cases
 **Goal:** Test across all 4 retailers, tune Claude prompt, handle edge cases
-**Files touched:** src/lib/extraction.ts (prompt text), src/lib/calculations.ts (edge cases)
+**Files touched:** lib/extraction.ts (prompt text), lib/calculations.ts (edge cases)
 
 **What to build:**
 - Test extraction on 3sixteen, Uniqlo, J.Crew, Abercrombie — document successes and failures
@@ -338,10 +338,11 @@ Your Claude API key is embedded at build time via an environment variable. Frien
 | 1 | Storage Layer + Types | Complete | 2 |
 | 2 | Landing Page | Complete | 3 |
 | 3 | Popup Router | Complete | 3 |
-| 4A | Fit Calculation Engine | Complete | 1 (lib/calculations.ts) |
-| 4B | Category Lookups + Callouts | Complete | 2 (lib/categories.ts, lib/callouts.ts) |
-| 4C | Descriptions + Garment Descriptions | Complete | 2 (lib/descriptions.ts, lib/garment-descriptions.ts) |
-| 5 | Side Panel Shell + Scorecard UI | Not started | 4-5 |
+| 4A | Fit Calculation Engine | Complete | 1 |
+| 4B | Category Lookups + Callouts | Complete | 2 |
+| 4C | Descriptions + Garment Descriptions | Complete | 2 |
+| 5A | Side Panel Shell | Complete | 5 |
+| 5B | Scorecard UI Components | Complete | 5 |
 | 6 | Page Capture + Claude API Extraction | Not started | 3 |
 | 7 | Wire Everything Together | Not started | 2 |
 | 8 | Extraction Prompt Tuning | Not started | 2 |
