@@ -8,7 +8,7 @@ export default defineConfig({
     name: 'Fit Check',
     description: 'Understand how garments will fit your body using published measurements',
     version: '0.1.0',
-    permissions: ['storage'],
+    permissions: ['storage', 'sidePanel'],
   },
   vite: () => ({
     plugins: [tailwindcss()],
