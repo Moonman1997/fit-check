@@ -334,11 +334,13 @@ Your Claude API key is embedded at build time via an environment variable. Frien
 
 | Phase | Description | Status | Files Changed |
 |-------|-------------|--------|---------------|
-| 0 | Project Scaffolding | Not started | 5 |
-| 1 | Storage Layer + Types | Not started | 2 |
-| 2 | Landing Page | Not started | 3 |
-| 3 | Popup Router | Not started | 3 |
-| 4 | Fit Calculation Engine | Not started | 3 |
+| 0 | Project Scaffolding | Complete | 5 |
+| 1 | Storage Layer + Types | Complete | 2 |
+| 2 | Landing Page | Complete | 3 |
+| 3 | Popup Router | Complete | 3 |
+| 4A | Fit Calculation Engine | Complete | 1 (lib/calculations.ts) |
+| 4B | Category Lookups + Callouts | Complete | 2 (lib/categories.ts, lib/callouts.ts) |
+| 4C | Descriptions + Garment Descriptions | Complete | 2 (lib/descriptions.ts, lib/garment-descriptions.ts) |
 | 5 | Side Panel Shell + Scorecard UI | Not started | 4-5 |
 | 6 | Page Capture + Claude API Extraction | Not started | 3 |
 | 7 | Wire Everything Together | Not started | 2 |
