@@ -23,7 +23,7 @@ export const measurementDescriptions: Record<
       'Increased chest ease is commonly used in contemporary and streetwear-oriented garments to create a boxier or more relaxed upper-body silhouette',
     ],
     context:
-      'Chest interpretation is affected by body proportions, garment structure, and styling intent. The same amount of chest ease may read differently on different body sizes, and garments designed with dropped shoulders or heavier fabrics may visually emphasize chest volume more than lighter or more structured pieces. Chest should be interpreted alongside shoulder placement and front length to understand how upper-body volume is distributed vertically and horizontally.',
+      'Chest interpretation is affected by body proportions, garment structure, and styling intent. The same amount of chest ease may read differently on different body sizes, and garments designed with dropped shoulders or heavier fabrics may visually emphasize chest volume more than lighter or more structured pieces. Chest is best interpreted alongside shoulder placement and front length to understand how upper-body volume is distributed vertically and horizontally.',
   },
   frontLength: {
     whatThisMeans:
@@ -49,7 +49,7 @@ export const measurementDescriptions: Record<
   },
   shoulder: {
     whatThisMeans:
-      'Shoulder width describes how far apart the garment\'s shoulder seams sit across the upper back. It affects where the sleeve begins, how the garment hangs through the shoulders, and how structured or relaxed the upper body appears. Most brands measure shoulder width by laying the garment flat and measuring straight across the back from one shoulder seam to the other. Some garments are constructed in ways that make shoulder measurement less exact (such as dropped shoulders, yoke seams, or seamless knits). In these cases, the measurement still indicates where the garment will sit and how it will drape, but it should be read as an approximation of shoulder placement rather than a precise anatomical match.',
+      'Shoulder width describes how far apart the garment\'s shoulder seams sit across the upper back. It affects where the sleeve begins, how the garment hangs through the shoulders, and how structured or relaxed the upper body appears. Most brands measure shoulder width by laying the garment flat and measuring straight across the back from one shoulder seam to the other. Some garments are constructed in ways that make shoulder measurement less exact (such as dropped shoulders, yoke seams, or seamless knits). In these cases, the measurement still indicates where the garment will sit and how it will drape, but it is best read as an approximation of shoulder placement rather than a precise anatomical match.',
     howThisShowsUpInWear: [
       'Shoulder placement affects where the sleeve starts on the arm',
       'Narrower shoulders create a more structured, compact upper body',
@@ -57,7 +57,7 @@ export const measurementDescriptions: Record<
       'Shoulder width is taken into account as part of sleeve length perception',
     ],
     context:
-      'Shoulder should be interpreted alongside sleeve length and chest to understand how the upper body is structured overall.',
+      'Shoulder is best interpreted alongside sleeve length and chest to understand how the upper body is structured overall.',
   },
   waistFixed: {
     whatThisMeans:
@@ -67,7 +67,7 @@ export const measurementDescriptions: Record<
       'Higher waist ease allows the garment to sit more loosely or rely more on belts, drawstrings, or elastic for stability',
     ],
     context:
-      'Waist interpretation is influenced by intended wearing position and garment construction. Fixed waists behave more predictably, while elastic or adjustable waists can accommodate a range of body sizes and preferences. Waist should be interpreted alongside rise to understand how the pants feel through the seat and upper thigh, and why the same inseam can look or feel different across garments.',
+      'Waist interpretation is influenced by intended wearing position and garment construction. Fixed waists behave more predictably, while elastic or adjustable waists can accommodate a range of body sizes and preferences. Waist is best interpreted alongside rise to understand how the pants feel through the seat and upper thigh, and why the same inseam can look or feel different across garments.',
   },
   waistElastic: {
     whatThisMeans:
@@ -77,7 +77,7 @@ export const measurementDescriptions: Record<
       'Fit can vary depending on how the waistband is worn and adjusted',
     ],
     context:
-      'Elastic and adjustable waistbands do not behave like fixed-waist garments and should be interpreted differently to avoid false precision. Instead of a single waist difference, Fit Check interprets these garments positionally within the published range. Waist should be interpreted alongside rise to understand how the pants feel through the seat and upper thigh.',
+      'Elastic and adjustable waistbands do not behave like fixed-waist garments and are best interpreted differently to avoid false precision. Instead of a single waist difference, Fit Check interprets these garments positionally within the published range. Waist is best interpreted alongside rise to understand how the pants feel through the seat and upper thigh.',
   },
   thigh: {
     whatThisMeans:
@@ -86,7 +86,7 @@ export const measurementDescriptions: Record<
       'Thigh ease influences freedom of movement when walking, sitting, or bending',
     ],
     context:
-      'Thigh measurements are not fully standardized across brands, and small differences in where the widest point is measured are common. Thigh should be interpreted alongside rise and leg opening to understand how the pant leg accommodates the upper leg and how volume transitions through the lower body.',
+      'Thigh measurements are not fully standardized across brands, and small differences in where the widest point is measured are common. Thigh is best interpreted alongside rise and leg opening to understand how the pant leg accommodates the upper leg and how volume transitions through the lower body.',
   },
   inseam: {
     whatThisMeans:
@@ -97,7 +97,7 @@ export const measurementDescriptions: Record<
       'Two garments with the same inseam can appear different in length depending on how the upper portion of the pant fits',
     ],
     context:
-      'Perceived inseam length is influenced by rise and top-block construction. A longer rise places the crotch seam lower on the body, which can make the same inseam feel longer in wear, while a shorter rise can make the same inseam feel shorter. Inseam and rise should be interpreted together rather than adjusted numerically.',
+      'Perceived inseam length is influenced by rise and top-block construction. A longer rise places the crotch seam lower on the body, which can make the same inseam feel longer in wear, while a shorter rise can make the same inseam feel shorter. Inseam and rise are best interpreted together rather than adjusted numerically.',
   },
   rise: {
     whatThisMeans:
@@ -107,7 +107,7 @@ export const measurementDescriptions: Record<
       'If a garment is worn higher or lower than the wearer\'s typical position, the waistband may feel looser or tighter due to natural changes in body circumference at different heights',
     ],
     context:
-      'Rise interpretation is influenced by body shape and how the garment is styled, but it should not be read as a directive for where pants must sit on the body. Rise should be interpreted alongside waist and thigh to understand how the upper block of the pant accommodates the body and why garments with similar waist and inseam measurements can feel very different in wear.',
+      'Rise interpretation is influenced by body shape and how the garment is styled, but it is not intended to be read as a directive for where pants must sit on the body. Rise is best interpreted alongside waist and thigh to understand how the upper block of the pant accommodates the body and why garments with similar waist and inseam measurements can feel very different in wear.',
   },
   legOpening: {
     whatThisMeans:
@@ -118,6 +118,6 @@ export const measurementDescriptions: Record<
       'Leg opening affects how the pant visually balances with footwear and how fabric gathers or hangs near the hem',
     ],
     context:
-      'Leg opening should be interpreted alongside thigh to understand how volume is distributed through the leg. A pant may feel relaxed through the thigh but appear narrow at the hem, or feel trim above the knee while appearing wide below it. Because leg opening describes shape rather than fit, it should not be used alone to infer comfort or tightness.',
+      'Leg opening is best interpreted alongside thigh to understand how volume is distributed through the leg. A pant may feel relaxed through the thigh but appear narrow at the hem, or feel trim above the knee while appearing wide below it. Because leg opening describes shape rather than fit, it is not intended to be used alone to infer comfort or tightness.',
   },
 };

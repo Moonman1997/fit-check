@@ -12,10 +12,18 @@ function App() {
   const [measurementsExist, setMeasurementsExist] = useState(false);
 
   useEffect(() => {
-    hasMeasurements().then((exists) => {
-      setMeasurementsExist(exists);
-      setLoading(false);
-    });
+    const load = async () => {
+      try {
+        const exists = await hasMeasurements();
+        setMeasurementsExist(exists);
+      } catch (err) {
+        console.error(err);
+        setMeasurementsExist(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, []);
 
   function handleAnalyze() {
