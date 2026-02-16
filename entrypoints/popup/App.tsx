@@ -10,6 +10,7 @@ function openLandingPage() {
 function App() {
   const [loading, setLoading] = useState(true);
   const [measurementsExist, setMeasurementsExist] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -27,17 +28,25 @@ function App() {
   }, []);
 
   async function handleAnalyze() {
-    const [tab] = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-    if (!tab?.id) return;
-    const chromeApi = typeof chrome !== 'undefined' ? chrome : undefined;
-    if (chromeApi?.sidePanel?.open) {
-      await chromeApi.sidePanel.open({ tabId: tab.id });
+    setError(null);
+    try {
+      const [tab] = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      if (!tab?.id) {
+        setError('Something went wrong. Try again.');
+        return;
+      }
+      const chromeApi = typeof chrome !== 'undefined' ? chrome : undefined;
+      if (chromeApi?.sidePanel?.open) {
+        await chromeApi.sidePanel.open({ tabId: tab.id });
+      }
+      browser.runtime.sendMessage({ action: 'analyzePage' });
+      window.close();
+    } catch {
+      setError('Something went wrong. Try again.');
     }
-    browser.runtime.sendMessage({ action: 'analyzePage' });
-    window.close();
   }
 
   if (loading) {
@@ -74,6 +83,9 @@ function App() {
       >
         Analyze This Page
       </button>
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
       <button
         type="button"
         onClick={openLandingPage}

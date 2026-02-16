@@ -26,6 +26,9 @@ function formatDelta(
       ? `~${pct}% extended past waistband`
       : `~${Math.abs(pct)}% shorter than waistband`;
   }
+  if (m.measurementName === 'Leg Opening' && m.delta !== null) {
+    return `${m.delta.toFixed(2)} leg-to-thigh ratio`;
+  }
   if (m.delta === null) {
     if (m.measurementName === 'Rise')
       return `${m.garmentValue}" front rise`;
