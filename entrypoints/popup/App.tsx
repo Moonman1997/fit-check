@@ -26,8 +26,18 @@ function App() {
     load();
   }, []);
 
-  function handleAnalyze() {
+  async function handleAnalyze() {
+    const [tab] = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    if (!tab?.id) return;
+    const chromeApi = typeof chrome !== 'undefined' ? chrome : undefined;
+    if (chromeApi?.sidePanel?.open) {
+      await chromeApi.sidePanel.open({ tabId: tab.id });
+    }
     browser.runtime.sendMessage({ action: 'analyzePage' });
+    window.close();
   }
 
   if (loading) {
