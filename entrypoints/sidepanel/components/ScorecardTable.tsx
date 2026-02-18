@@ -229,6 +229,12 @@ function ScorecardTable({ result }: ScorecardTableProps) {
                   )}
                 </div>
                 <p className="mt-1 text-sm text-gray-700">{primaryText}</p>
+                {name === 'Front Length' && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Front length is measured relative to the waistband. Most
+                    modern casual tops fall in the Extended or Longline range.
+                  </p>
+                )}
                 {isDescExpanded && descKey && (
                   <DescriptionExpand measurementKey={descKey} />
                 )}

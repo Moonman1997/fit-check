@@ -71,13 +71,13 @@ export function getFrontLengthCategory(
       universalMeaning:
         'Hem meets waistband or upper hip. Belt mostly covered; top of front pockets may be visible. Stomach covered at rest.',
     };
-  if (normalizedDiff <= 0.12)
+  if (normalizedDiff <= 0.14)
     return {
       category: 'Extended',
       universalMeaning:
         'Hem sits below waistband onto hip. Belt line and pocket openings covered. Hem reaches toward lower half of front pockets.',
     };
-  if (normalizedDiff < 0.22)
+  if (normalizedDiff < 0.28)
     return {
       category: 'Longline',
       universalMeaning:

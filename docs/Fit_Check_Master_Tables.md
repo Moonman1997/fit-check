@@ -85,9 +85,9 @@ Front length perception depends on both body proportions and garment constructio
 | < −0.14 | High-Cropped | Hem sits well above waistband. Lower stomach and belt area visible. Hem does not reach top of front pockets. |
 | −0.14 to −0.08 | Cropped | Hem sits just above waistband. Belt line and upper pant fly visible. Hem does not cover top of front pockets. |
 | −0.08 to +0.04 | Aligned | Hem meets waistband or upper hip. Belt mostly covered; top of front pockets may be visible. Stomach covered at rest. |
-| +0.04 to +0.12 | Extended | Hem sits below waistband onto hip. Belt line and pocket openings covered. Hem reaches toward lower half of front pockets. |
-| +0.12 to +0.22 | Longline | Hem falls below hip past bottom of front pockets, approaching upper thigh. Torso appears visually elongated. |
-| ≥ +0.22 | Extra-Long | Hem extends clearly onto thigh, below pocket level. Garment length becomes dominant visual feature. |
+| +0.04 to +0.14 | Extended | Hem sits below waistband onto hip. Belt line and pocket openings covered. Hem reaches toward lower half of front pockets. |
+| +0.14 to +0.28 | Longline | Hem falls below hip past bottom of front pockets, approaching upper thigh. Torso appears visually elongated. |
+| ≥ +0.28 | Extra-Long | Hem extends clearly onto thigh, below pocket level. Garment length becomes dominant visual feature. |
 
 ### Per-Garment Descriptions
 
