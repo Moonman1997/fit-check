@@ -7,7 +7,6 @@ import type {
   UserMeasurements,
 } from '@/lib/types';
 import CalloutsSection from './components/CalloutsSection.tsx';
-import MissingMeasurements from './components/MissingMeasurements.tsx';
 import ScorecardTable from './components/ScorecardTable.tsx';
 import SizeSelector from './components/SizeSelector.tsx';
 
@@ -127,8 +126,6 @@ function SidePanel() {
         measurements={data.measurements}
         garmentSubType={data.garmentSubType}
       />
-
-      <MissingMeasurements missingMeasurements={data.missingMeasurements} />
 
       {(data.fabricInfo || data.brandFitNotes) && (
         <div className="border-t border-gray-200 pt-3 text-xs text-gray-500">

@@ -33,7 +33,9 @@ function normalizeToGarmentType(subType: string): GarmentType | null {
   if (
     lower.includes('t-shirt') ||
     lower.includes('tee') ||
-    lower.includes('long sleeve')
+    lower.includes('long sleeve') ||
+    lower.includes('henley') ||
+    lower.includes('thermal')
   )
     return 't-shirt';
   if (lower.includes('polo')) return 'polo';
@@ -42,13 +44,18 @@ function normalizeToGarmentType(subType: string): GarmentType | null {
     lower.includes('button up') ||
     lower.includes('oxford') ||
     lower.includes('flannel') ||
-    lower.includes('dress shirt')
+    lower.includes('dress shirt') ||
+    (lower.includes('shirt') &&
+      !lower.includes('sweatshirt') &&
+      !lower.includes('t-shirt') &&
+      !lower.includes('tee'))
   )
     return 'button-up';
   if (
     lower.includes('sweatshirt') ||
     lower.includes('hoodie') ||
-    lower.includes('hoody')
+    lower.includes('hoody') ||
+    lower.includes('crewneck')
   )
     return 'sweatshirt-hoodie';
   if (
@@ -58,23 +65,25 @@ function normalizeToGarmentType(subType: string): GarmentType | null {
   )
     return 'sweater';
   if (
-    lower.includes('light jacket') ||
-    lower.includes('lightweight') ||
-    lower.includes('bomber') ||
-    lower.includes('windbreaker') ||
-    lower.includes('overshirt') ||
-    lower.includes('shacket')
-  )
-    return 'light-jacket';
-  if (
     lower.includes('heavy jacket') ||
     lower.includes('coat') ||
     lower.includes('parka') ||
     lower.includes('overcoat') ||
     lower.includes('puffer') ||
-    lower.includes('down jacket')
+    lower.includes('down jacket') ||
+    lower.includes('welding')
   )
     return 'heavy-jacket';
+  if (
+    lower.includes('light jacket') ||
+    lower.includes('lightweight') ||
+    lower.includes('bomber') ||
+    lower.includes('windbreaker') ||
+    lower.includes('overshirt') ||
+    lower.includes('shacket') ||
+    lower.includes('jacket')
+  )
+    return 'light-jacket';
   if (lower.includes('jeans') || lower.includes('denim')) return 'jeans';
   if (lower.includes('chinos') || lower.includes('chino')) return 'chinos';
   if (

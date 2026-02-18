@@ -1,7 +1,7 @@
 # Fit Check — V1 Implementation Plan
 
 **Last updated:** Feb 11, 2026
-**Current phase:** Not started
+**Current phase:** Phase 8: Extraction Prompt Tuning
 **Target:** Sideloadable Chrome extension for friend testing
 
 ---
@@ -342,8 +342,8 @@ Your Claude API key is embedded at build time via an environment variable. Frien
 | 4B | Category Lookups + Callouts | Complete | 2 |
 | 4C | Descriptions + Garment Descriptions | Complete | 2 |
 | 5A | Side Panel Shell | Complete | 5 |
-| 5B | Scorecard UI Components | Complete | 5 |
-| 6 | Page Capture + Claude API Extraction | Not started | 3 |
-| 7 | Wire Everything Together | Not started | 2 |
+| 5B | Scorecard UI Components | Complete | 6 |
+| 6 | Page Capture + Claude API Extraction | Complete | 4 |
+| 7 | Wire Everything Together | Complete | 4 |
 | 8 | Extraction Prompt Tuning | Not started | 2 |
 | 9 | Polish + Test-Ready Build | Not started | Various |

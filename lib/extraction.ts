@@ -46,6 +46,10 @@ shoulder: shoulder seam to shoulder seam (flat, in inches)
 sleeveLength: sleeve length (flat, in inches)
 frontLength: front length / body length from HPS to hem (flat, in inches)
 
+IMPORTANT: Only extract this as frontLength if the brand labels it as "front length", "body length", or just "length" without qualifier.
+If the brand specifically labels it as "back length" or "length (back)", do NOT extract it as frontLength. Back length and front length are different measurements and are not interchangeable.
+If only back length is available, omit frontLength entirely (the system will mark it as a missing measurement).
+
 For bottoms, extract these measurements PER SIZE when available:
 
 waist: waistband width (flat measurement, in inches)
@@ -60,9 +64,18 @@ waistType: "fixed" or "elastic" (if the waistband has elastic or drawstring, use
 waistMin and waistMax: if elastic, extract the waist range if provided
 If only inseam is not available but outseam is, extract outseam instead
 
-For sleeves, determine:
+For sleeves, determine the measurement type:
 
-sleeveMeasurementType: "shoulder-to-cuff" or "center-back-to-cuff" based on how the brand labels it
+sleeveMeasurementType: "shoulder-to-cuff" or "center-back-to-cuff"
+IMPORTANT: Many brands measure sleeves from center-back of neck to cuff, especially on size charts. Look for these indicators of center-back-to-cuff:
+
+Labels containing: "center back", "CB", "centre back", "from center", "from neck"
+Sleeve values that seem unusually long (typically 32-37 inches for center-back) compared to shoulder-to-cuff (typically 22-28 inches)
+Size charts where the sleeve column header mentions "center back" or similar
+
+
+If the label just says "sleeve length" with no qualifier, check the values: if they are in the 30-38 inch range, they are almost certainly center-back-to-cuff measurements. If they are in the 20-28 inch range, they are almost certainly shoulder-to-cuff.
+When in doubt, default to "shoulder-to-cuff" but note this in rawConfidence.
 
 CONTEXTUAL INFO:
 
@@ -79,13 +92,19 @@ If a measurement is not available for any size, omit it entirely rather than gue
 Flat measurements should stay as flat values (do not double them). The system handles flat-to-circumference conversion.
 Look for measurements in: size chart tables, product description text, technical details sections, and the screenshot image.
 
+CRITICAL: For tops, you MUST include the "sleeveMeasurementType" field in EVERY size object. This field is required, not optional. Set it to "shoulder-to-cuff" or "center-back-to-cuff" based on your analysis.
+
 Respond with ONLY a valid JSON object matching this exact structure (no markdown, no explanation, no code fences):
 {
 "garmentType": "top" or "bottom",
 "garmentSubType": "string — e.g. t-shirt, polo, button-up, hoodie, sweatshirt, sweater, light-jacket, heavy-jacket, jeans, chinos, trousers, sweatpants, joggers, shorts, cargos",
 "sizes": {
 "SIZE_LABEL": {
-...measurements as numbers (inches)
+"chest": 22,
+"shoulder": 19,
+"sleeveLength": 25,
+"sleeveMeasurementType": "shoulder-to-cuff",
+"frontLength": 28
 }
 },
 "fabricInfo": "string or null",
