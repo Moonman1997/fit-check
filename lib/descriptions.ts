@@ -111,13 +111,13 @@ export const measurementDescriptions: Record<
   },
   legOpening: {
     whatThisMeans:
-      'Leg opening describes the width of the pant at the hem relative to the width of the thigh. This measurement is used to understand how the leg narrows, stays straight, or opens as it moves downward, which defines the lower-leg silhouette. Leg opening reflects shape only, not how loose or fitted the pant is overall. A garment can have a narrow or wide leg opening regardless of how much room it has through the thigh or seat.',
+      'Pant silhouette describes the width of the pant at the hem relative to the width of the thigh. This measurement is used to understand how the leg narrows, stays straight, or opens as it moves downward, which defines the lower-leg silhouette. Pant silhouette reflects shape only, not how loose or fitted the pant is overall. A garment can have a narrow or wide leg opening regardless of how much room it has through the thigh or seat.',
     howThisShowsUpInWear: [
-      'Narrower leg openings create a tapered lower-leg shape, while wider openings create a straighter or more open silhouette',
-      'Two garments with the same thigh fit can appear very different below the knee depending on leg opening',
-      'Leg opening affects how the pant visually balances with footwear and how fabric gathers or hangs near the hem',
+      'Narrower openings create a tapered lower-leg shape, while wider openings create a straighter or more open silhouette',
+      'Two garments with the same thigh fit can appear very different below the knee depending on pant silhouette',
+      'Pant silhouette affects how the pant visually balances with footwear and how fabric gathers or hangs near the hem',
     ],
     context:
-      'Leg opening is best interpreted alongside thigh to understand how volume is distributed through the leg. A pant may feel relaxed through the thigh but appear narrow at the hem, or feel trim above the knee while appearing wide below it. Because leg opening describes shape rather than fit, it is not intended to be used alone to infer comfort or tightness.',
+      'Pant silhouette is best interpreted alongside thigh to understand how volume is distributed through the leg. A pant may feel relaxed through the thigh but appear narrow at the hem, or feel trim above the knee while appearing wide below it. Because it describes shape rather than fit, it is not intended to be used alone to infer comfort or tightness.',
   },
 };

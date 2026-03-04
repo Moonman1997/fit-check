@@ -444,7 +444,7 @@ Rise interpretation is influenced by body shape and how the garment is styled, b
 
 ---
 
-## 10. LEG OPENING (Silhouette)
+## 10. PANT SILHOUETTE (LEG OPENING)
 
 ### Equation
 ```

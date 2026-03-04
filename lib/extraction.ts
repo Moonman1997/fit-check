@@ -64,6 +64,58 @@ waistType: "fixed" or "elastic" (if the waistband has elastic or drawstring, use
 waistMin and waistMax: if elastic, extract the waist range if provided
 If only inseam is not available but outseam is, extract outseam instead
 
+BOTTOMS MEASUREMENT VALIDATION:
+Before returning your response, validate each measurement against these typical ranges (in inches):
+
+waist: 26-50 inches (flat: 13-25 inches)
+frontRise: 8-14 inches. If your extracted rise value is above 15 inches, you likely grabbed the wrong column or didn't convert from cm.
+thigh: 9-16 inches (flat). If above 20, check if the value is in cm and needs conversion.
+inseam: 28-36 inches for full-length pants. If above 40 inches, this is likely an OUTSEAM (total length from waistband to hem), not an inseam. Extract it as "outseam" instead.
+legOpening: 5-12 inches (flat) for most pants. If above 15, check if the value is in cm and needs conversion.
+outseam: 38-48 inches typically.
+
+OUTSEAM vs INSEAM:
+
+If a size chart column is labeled "Length", "Total Length", or "Outseam", this is the outseam — NOT the inseam.
+If the value in a "Length" column is above 38 inches, it is almost certainly outseam.
+Extract outseam values in the "outseam" field. The system will convert to inseam automatically.
+Do NOT put outseam values in the "inseam" field.
+
+MIXED UNITS (CM AND INCHES):
+
+Some size charts mix cm and inches in different columns.
+Check EACH column independently — do not assume the whole chart uses the same unit.
+If a column header says "cm" or values are typically 2.54x larger than expected, convert to inches.
+Common giveaways: waist values above 60 are in cm, rise values above 20 are in cm, leg opening above 15 is likely cm.
+
+SIZE VARIANTS (TALL, SHORT, LONG):
+
+If a size chart includes variants like "S-TALL", "M-TALL", "L-TALL" or "Short", "Regular", "Long" options:
+Extract EACH variant as a separate size with its own measurements.
+Do NOT copy measurements from one variant to another — read each row individually.
+TALL variants typically differ in inseam/outseam length from regular sizes.
+
+SAME MEASUREMENTS ACROSS SIZES:
+
+Some brands publish garment measurements for only one size (e.g., "Taken from size M").
+If measurements like inseam, rise, and leg opening are identical across all sizes, this is likely correct — these dimensions often don't vary by size for casual pants.
+However, waist and thigh SHOULD vary by size. If they don't, something may be wrong.
+
+INSEAM LENGTH OPTIONS:
+
+Some brands offer multiple inseam lengths (e.g., "Short: 26 inches, Regular: 28 inches, Long: 30 inches").
+Extract the REGULAR inseam as the default inseam value.
+Note the other options in brandFitNotes (e.g., "Also available in Short (26 inch) and Long (30 inch) inseam").
+
+COLUMN IDENTIFICATION:
+
+When a size chart has multiple columns, carefully match each column header to the correct measurement field.
+"Opening" or "Hem" or "Leg Opening" = legOpening
+"Rise" or "Front Rise" = frontRise
+"Length" or "Outseam" = outseam (not inseam, unless explicitly labeled "Inseam")
+"Half Waist" = half of waist circumference (multiply by 2 for waist, or ignore if full waist is also provided)
+Do NOT confuse adjacent columns — read each header and its values independently.
+
 For sleeves, determine the measurement type:
 
 sleeveMeasurementType: "shoulder-to-cuff" or "center-back-to-cuff"
@@ -144,9 +196,7 @@ function parseAndValidateResponse(
     typeof (parsed as { error: string }).error === 'string'
   ) {
     const reason =
-      typeof (parsed as { reason?: string }).reason === 'string'
-        ? (parsed as { reason: string }).reason
-        : 'Unknown reason';
+      (parsed as Record<string, string>).reason || 'Unknown reason';
     throw new Error(`Extraction failed: ${reason}`);
   }
 

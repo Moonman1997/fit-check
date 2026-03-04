@@ -62,7 +62,7 @@ const MISSING_IMPACTS: Record<string, string> = {
   Thigh: 'Thigh fit and ease cannot be determined.',
   Inseam: 'Hem landing point and stacking cannot be determined.',
   Rise: 'Seat room and upper block fit cannot be determined.',
-  'Leg Opening': 'Leg silhouette (taper vs straight) cannot be determined.',
+  'Pant Silhouette': 'Pant silhouette (taper vs straight) cannot be determined.',
 };
 
 export function getAvailableSizes(extraction: ExtractionResult): string[] {
@@ -75,7 +75,7 @@ function collectValues<K extends keyof TopMeasurements | keyof BottomMeasurement
 ): number[] {
   const values: number[] = [];
   for (const sizeData of Object.values(sizes)) {
-    const v = sizeData[key];
+    const v = (sizeData as Record<string, unknown>)[key];
     if (typeof v === 'number' && !Number.isNaN(v)) values.push(v);
   }
   return values;
@@ -92,7 +92,7 @@ export function generateScorecard(
     const expected =
       extraction.garmentType === 'top'
         ? ['Chest', 'Shoulder', 'Sleeve Length', 'Front Length']
-        : ['Waist', 'Thigh', 'Inseam', 'Rise', 'Leg Opening'];
+        : ['Waist', 'Thigh', 'Inseam', 'Rise', 'Pant Silhouette'];
     return {
       size: selectedSize,
       garmentType: extraction.garmentType,
@@ -332,7 +332,7 @@ export function generateScorecard(
       );
       if (!Number.isNaN(ltr)) {
         measurements.push({
-          measurementName: 'Leg Opening',
+          measurementName: 'Pant Silhouette',
           garmentValue: sizeMeasurements.legOpening,
           delta: ltr,
           fitCategory: getLegOpeningCategory(ltr),
@@ -344,7 +344,7 @@ export function generateScorecard(
   }
 
   const expectedTop = ['Chest', 'Shoulder', 'Sleeve Length', 'Front Length'];
-  const expectedBottom = ['Waist', 'Thigh', 'Inseam', 'Rise', 'Leg Opening'];
+  const expectedBottom = ['Waist', 'Thigh', 'Inseam', 'Rise', 'Pant Silhouette'];
   const expected =
     extraction.garmentType === 'top' ? expectedTop : expectedBottom;
   const presentNames = new Set(measurements.map((m) => m.measurementName));

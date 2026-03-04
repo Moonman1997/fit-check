@@ -12,7 +12,7 @@ const MEASUREMENT_NAME_TO_KEY: Record<string, string> = {
   Thigh: 'thigh',
   Inseam: 'inseam',
   Rise: 'rise',
-  'Leg Opening': 'legOpening',
+  'Pant Silhouette': 'legOpening',
 };
 
 const EXPECTED_TOP_ORDER = [
@@ -27,7 +27,7 @@ const EXPECTED_BOTTOM_ORDER = [
   'Thigh',
   'Rise',
   'Inseam',
-  'Leg Opening',
+  'Pant Silhouette',
 ] as const;
 
 type MeasurementRow =
@@ -61,12 +61,12 @@ function formatDelta(m: MeasurementResult): string {
       ? `~${pct}% extended past waistband`
       : `~${Math.abs(pct)}% shorter than waistband`;
   }
-  if (m.measurementName === 'Leg Opening' && m.delta !== null) {
+  if (m.measurementName === 'Pant Silhouette' && m.delta !== null) {
     return `${m.delta.toFixed(2)} leg-to-thigh ratio`;
   }
   if (m.delta === null) {
     if (m.measurementName === 'Rise') return `${m.garmentValue}" front rise`;
-    if (m.measurementName === 'Leg Opening')
+    if (m.measurementName === 'Pant Silhouette')
       return `${m.garmentValue.toFixed(2)} ratio`;
     return `${m.garmentValue}"`;
   }
