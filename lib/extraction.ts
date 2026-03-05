@@ -32,6 +32,14 @@ You are given:
 A screenshot of the product page (which may show a size chart modal or table)
 The HTML of the product page (which may contain measurements in product details, tables, or hidden elements)
 
+DATA SOURCE PRIORITY:
+
+ALWAYS prefer structured HTML data over the screenshot image for extracting measurements.
+HTML tables and structured elements provide unambiguous column-to-header mapping, while screenshots require visual parsing that can lead to column confusion.
+Use the screenshot primarily for: confirming garment type, reading visual-only size charts (images), and cross-checking HTML data.
+When you find a size chart in the HTML (look for table elements, div grids with row/col structure, or repeated measurement patterns), extract measurements from the HTML.
+Pay close attention to units embedded in values (e.g., "43.2in", "37.7cm") — these tell you exactly what unit each value is in.
+
 Extract the following information:
 GARMENT TYPE:
 
@@ -115,6 +123,19 @@ When a size chart has multiple columns, carefully match each column header to th
 "Length" or "Outseam" = outseam (not inseam, unless explicitly labeled "Inseam")
 "Half Waist" = half of waist circumference (multiply by 2 for waist, or ignore if full waist is also provided)
 Do NOT confuse adjacent columns — read each header and its values independently.
+
+DO NOT FABRICATE MEASUREMENTS:
+
+Only extract a measurement if there is a clearly labeled column or field for it.
+If a size chart does not have a column for "thigh" or "upper thigh" or "thigh width", do NOT extract thigh. Leave it out entirely — the system will mark it as missing.
+Do NOT repurpose values from other columns to fill in missing measurements. For example:
+
+"Half Waist" is NOT thigh
+"Opening" is NOT rise (unless explicitly labeled as rise)
+"Length" is NOT inseam (it is outseam)
+
+
+It is always better to omit a measurement than to extract the wrong value. Missing measurements are handled gracefully by the system. Wrong measurements damage user trust.
 
 For sleeves, determine the measurement type:
 
