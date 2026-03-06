@@ -35,7 +35,7 @@ export default defineBackground(() => {
               return;
             }
 
-            const dataUrl = await browser.tabs.captureVisibleTab(undefined, {
+            const dataUrl = await browser.tabs.captureVisibleTab({
               format: 'png',
             });
             const screenshotBase64 = dataUrl.replace(
@@ -77,11 +77,45 @@ export default defineBackground(() => {
               return;
             }
 
-            const scorecard = generateScorecard(
-              extraction,
-              userMeasurements,
-              sizes[0]
-            );
+            let scorecard: ReturnType<typeof generateScorecard>;
+            let initialWaist: number | undefined;
+            let initialLength: number | undefined;
+
+            if (extraction.sizingFormat === 'waist-length') {
+              const waistOpts = extraction.labeledWaistOptions ?? [];
+              const lengthOpts = extraction.labeledLengthOptions ?? [];
+              initialWaist =
+                waistOpts.length > 0
+                  ? waistOpts.reduce((a, b) =>
+                      Math.abs(a - userMeasurements.waist) <=
+                      Math.abs(b - userMeasurements.waist)
+                        ? a
+                        : b
+                    )
+                  : undefined;
+              initialLength =
+                lengthOpts.length > 0
+                  ? lengthOpts.reduce((a, b) =>
+                      Math.abs(a - userMeasurements.inseam) <=
+                      Math.abs(b - userMeasurements.inseam)
+                        ? a
+                        : b
+                    )
+                  : undefined;
+              scorecard = generateScorecard(
+                extraction,
+                userMeasurements,
+                'default',
+                initialWaist,
+                initialLength
+              );
+            } else {
+              scorecard = generateScorecard(
+                extraction,
+                userMeasurements,
+                sizes[0]
+              );
+            }
 
             browser.runtime.sendMessage({
               action: 'showResults',
@@ -90,6 +124,8 @@ export default defineBackground(() => {
                 scorecard,
                 availableSizes: sizes,
                 userMeasurements,
+                initialWaist,
+                initialLength,
               },
             }).catch(() => {});
 

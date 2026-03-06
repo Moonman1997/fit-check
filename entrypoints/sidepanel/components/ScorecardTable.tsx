@@ -53,26 +53,28 @@ function buildOrderedRows(result: ScorecardResult): MeasurementRow[] {
 }
 
 function formatDelta(m: MeasurementResult): string {
+  const prefix = m.tier === 'labeled' ? '~' : '';
   if (m.measurementName === 'Front Length') {
-    if (m.delta === null) return `${m.garmentValue}"`;
-    if (m.delta === 0) return 'Matches body';
+    if (m.delta === null) return `${prefix}${m.garmentValue}"`;
+    if (m.delta === 0) return `${prefix}Matches body`;
     const pct = Math.round(m.delta * 100);
     return pct > 0
       ? `~${pct}% extended past waistband`
       : `~${Math.abs(pct)}% shorter than waistband`;
   }
   if (m.measurementName === 'Pant Silhouette' && m.delta !== null) {
-    return `${m.delta.toFixed(2)} leg-to-thigh ratio`;
+    return `${prefix}${m.delta.toFixed(2)} leg-to-thigh ratio`;
   }
   if (m.delta === null) {
-    if (m.measurementName === 'Rise') return `${m.garmentValue}" front rise`;
+    if (m.measurementName === 'Rise')
+      return `${prefix}${m.garmentValue}" front rise`;
     if (m.measurementName === 'Pant Silhouette')
-      return `${m.garmentValue.toFixed(2)} ratio`;
-    return `${m.garmentValue}"`;
+      return `${prefix}${m.garmentValue.toFixed(2)} ratio`;
+    return `${prefix}${m.garmentValue}"`;
   }
-  if (m.delta === 0) return 'Matches body';
-  if (m.delta > 0) return `+${m.delta.toFixed(1)}" more than body`;
-  return `${Math.abs(m.delta).toFixed(1)}" less than body`;
+  if (m.delta === 0) return `${prefix}Matches body`;
+  if (m.delta > 0) return `${prefix}+${m.delta.toFixed(1)}" more than body`;
+  return `${prefix}${Math.abs(m.delta).toFixed(1)}" less than body`;
 }
 
 interface InfoIconProps {
@@ -136,9 +138,10 @@ function DescriptionExpand({ measurementKey }: DescriptionExpandProps) {
 
 interface ScorecardTableProps {
   result: ScorecardResult;
+  bodyMeasurementNote?: string;
 }
 
-function ScorecardTable({ result }: ScorecardTableProps) {
+function ScorecardTable({ result, bodyMeasurementNote }: ScorecardTableProps) {
   const [expandedUniversal, setExpandedUniversal] = useState<Set<string>>(
     new Set()
   );
@@ -168,6 +171,14 @@ function ScorecardTable({ result }: ScorecardTableProps) {
 
   return (
     <div className="space-y-2">
+      {bodyMeasurementNote && (
+        <div className="rounded border border-amber-200 bg-amber-50 p-3">
+          <div className="flex items-start gap-2">
+            <span className="text-amber-600 font-medium shrink-0">Note</span>
+            <p className="text-xs text-amber-800">{bodyMeasurementNote}</p>
+          </div>
+        </div>
+      )}
       {rows.map((row) => {
         const name = row.isMissing ? row.name : row.data.measurementName;
         const descKey = MEASUREMENT_NAME_TO_KEY[name] ?? '';
@@ -229,6 +240,11 @@ function ScorecardTable({ result }: ScorecardTableProps) {
                   )}
                 </div>
                 <p className="mt-1 text-sm text-gray-700">{primaryText}</p>
+                {m.tier === 'labeled' && m.approximationNote && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    {m.approximationNote}
+                  </p>
+                )}
                 {name === 'Front Length' && (
                   <p className="mt-1 text-xs text-gray-500">
                     Front length is measured relative to the waistband. Most

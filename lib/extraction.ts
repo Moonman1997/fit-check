@@ -1,6 +1,7 @@
 import type {
   BottomMeasurements,
   ExtractionResult,
+  MeasurementTier,
   TopMeasurements,
 } from './types';
 
@@ -39,6 +40,50 @@ HTML tables and structured elements provide unambiguous column-to-header mapping
 Use the screenshot primarily for: confirming garment type, reading visual-only size charts (images), and cross-checking HTML data.
 When you find a size chart in the HTML (look for table elements, div grids with row/col structure, or repeated measurement patterns), extract measurements from the HTML.
 Pay close attention to units embedded in values (e.g., "43.2in", "37.7cm") — these tell you exactly what unit each value is in.
+
+MEASUREMENT SOURCING TIERS:
+For each measurement you extract, determine where it came from:
+
+Tier 1 - GARMENT MEASUREMENT: An actual garment measurement from a size chart or product details.
+These are measurements of the physical garment (e.g., "Chest: 22 inches flat", "Inseam: 32 inches").
+This is the gold standard — use these whenever available.
+
+Tier 2 - BODY MEASUREMENT: A measurement describing the person the garment is designed to fit, NOT the garment itself.
+Examples: "Designed for chest 38-40 inches", "Waist: 32-34" in a "Size Guide" that maps sizes to body dimensions.
+Do NOT extract body measurements as garment measurements. Instead, note them in the bodyMeasurementNote field.
+
+Tier 3 - LABELED SELECTOR: When no size chart exists but the product page has size selectors like "35W", "34L", "32x30".
+The number in the selector label can be used as an approximate measurement.
+Only use this when NO garment measurement chart and NO body measurement chart provides the value.
+
+Tier 4 - UNAVAILABLE: The measurement cannot be determined from any source on the page.
+
+IMPORTANT: Tiers are assigned PER MEASUREMENT, not per page. A single page might have:
+- Garment measurements for rise and leg opening (Tier 1)
+- Body measurements for waist (Tier 2 — do not extract, just note it)
+- Labeled selectors for waist and inseam (Tier 3 — use as approximate)
+- No thigh data at all (Tier 4)
+
+JEANS AND WAIST × LENGTH PRODUCTS:
+Some products (especially jeans) use a dual sizing system: waist number × length number (e.g., 35W × 34L, or "32 x 30").
+When you detect this pattern:
+- Set sizingFormat to "waist-length"
+- Extract all available waist options as labeledWaistOptions (just the numbers, e.g., [28, 29, 30, 31, 32])
+- Extract all available length options as labeledLengthOptions (just the numbers, e.g., [28, 30, 32, 34])
+- For the sizes object: create ONE entry called "default" with any shared garment measurements (rise, leg opening, thigh if available)
+- The waist and inseam values will come from the user's selector choice, not from the sizes object
+
+How to detect waist × length format:
+- Product page has separate waist and length/inseam selectors
+- Size options look like "32W", "34W" or "28L", "30L", "32L"
+- Size options look like "32x30", "34x32"
+- Product is jeans/denim with numeric sizing
+
+BODY MEASUREMENT DETECTION:
+If you find a size chart that contains body measurements instead of garment measurements, report this:
+- Set bodyMeasurementNote to a clear explanation, e.g.: "This brand provides body measurements (the body size each garment size is designed to fit) rather than garment measurements (the actual dimensions of the garment). Fit analysis requires garment measurements for full accuracy."
+- Do NOT extract body measurements into the sizes object
+- Still extract any actual garment measurements found elsewhere on the page (e.g., in "Size & fit" text)
 
 Extract the following information:
 GARMENT TYPE:
@@ -167,31 +212,83 @@ Look for measurements in: size chart tables, product description text, technical
 
 CRITICAL: For tops, you MUST include the "sleeveMeasurementType" field in EVERY size object. This field is required, not optional. Set it to "shoulder-to-cuff" or "center-back-to-cuff" based on your analysis.
 
-Respond with ONLY a valid JSON object matching this exact structure (no markdown, no explanation, no code fences):
+Respond with ONLY a valid JSON object matching this structure (no markdown, no explanation, no code fences):
+
+For STANDARD products (most tops, pants with garment measurement charts):
 {
 "garmentType": "top" or "bottom",
-"garmentSubType": "string — e.g. t-shirt, polo, button-up, hoodie, sweatshirt, sweater, light-jacket, heavy-jacket, jeans, chinos, trousers, sweatpants, joggers, shorts, cargos",
+"garmentSubType": "string",
+"sizingFormat": "standard",
 "sizes": {
 "SIZE_LABEL": {
-"chest": 22,
-"shoulder": 19,
-"sleeveLength": 25,
-"sleeveMeasurementType": "shoulder-to-cuff",
-"frontLength": 28
+// For tops: chest, shoulder, sleeveLength, sleeveMeasurementType, frontLength
+// For bottoms: waist, frontRise, thigh, inseam, outseam, legOpening, waistType, waistMin, waistMax
 }
+},
+"measurementTiers": {
+"chest": "garment",
+"shoulder": "garment",
+"sleeveLength": "garment",
+"frontLength": "garment"
 },
 "fabricInfo": "string or null",
 "brandFitNotes": "string or null",
-"rawConfidence": "string — brief note about extraction quality, e.g. 'All measurements found in HTML table' or 'Some measurements extracted from screenshot image, may be less precise'"
+"bodyMeasurementNote": "string or null",
+"rawConfidence": "string"
 }
-If no garment measurements can be found on this page, respond with:
+
+For JEANS / WAIST × LENGTH products:
 {
-"error": "No garment measurements found",
-"reason": "brief explanation"
-}`;
+"garmentType": "bottom",
+"garmentSubType": "jeans",
+"sizingFormat": "waist-length",
+"sizes": {
+"default": {
+"frontRise": 12.75,
+"legOpening": 15.5
+}
+},
+"labeledWaistOptions": [28, 29, 30, 31, 32, 33, 34, 36, 38, 40, 42],
+"labeledLengthOptions": [28, 30, 32, 34],
+"measurementTiers": {
+"waist": "labeled",
+"inseam": "labeled",
+"frontRise": "garment",
+"legOpening": "garment",
+"thigh": "unavailable"
+},
+"fabricInfo": "string or null",
+"brandFitNotes": "string or null",
+"bodyMeasurementNote": "This brand provides body measurements rather than garment measurements in the size chart. Fit analysis uses garment data from the product description where available.",
+"rawConfidence": "string"
+}
+
+If no garment measurements can be found on this page, respond with:
+{"error": "No garment measurements found", "reason": "brief explanation"}`;
 
 const HTML_INSTRUCTION_PREFIX =
   'Here is the HTML from this product page. Look for garment measurements in tables, product details, and any structured data:\n\n';
+
+const VALID_TIERS: MeasurementTier[] = [
+  'garment',
+  'body',
+  'labeled',
+  'unavailable',
+];
+
+function parseMeasurementTiers(
+  raw: unknown
+): Record<string, MeasurementTier> | undefined {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw))
+    return undefined;
+  const obj = raw as Record<string, unknown>;
+  const result: Record<string, MeasurementTier> = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (typeof val === 'string' && VALID_TIERS.includes(val as MeasurementTier))
+      result[key] = val as MeasurementTier;
+  }
+  return Object.keys(result).length > 0 ? result : undefined;
+}
 
 function stripMarkdownFences(text: string): string {
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -263,6 +360,27 @@ function parseAndValidateResponse(
     rawConfidence:
       typeof p.rawConfidence === 'string' && p.rawConfidence
         ? p.rawConfidence
+        : undefined,
+    sizingFormat:
+      p.sizingFormat === 'waist-length'
+        ? 'waist-length'
+        : p.sizingFormat === 'standard'
+          ? 'standard'
+          : undefined,
+    labeledWaistOptions: Array.isArray(p.labeledWaistOptions)
+      ? (p.labeledWaistOptions as number[]).filter(
+          (n): n is number => typeof n === 'number' && !Number.isNaN(n)
+        )
+      : undefined,
+    labeledLengthOptions: Array.isArray(p.labeledLengthOptions)
+      ? (p.labeledLengthOptions as number[]).filter(
+          (n): n is number => typeof n === 'number' && !Number.isNaN(n)
+        )
+      : undefined,
+    measurementTiers: parseMeasurementTiers(p.measurementTiers),
+    bodyMeasurementNote:
+      typeof p.bodyMeasurementNote === 'string' && p.bodyMeasurementNote
+        ? p.bodyMeasurementNote
         : undefined,
   };
 

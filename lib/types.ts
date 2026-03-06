@@ -31,6 +31,13 @@ export interface BottomMeasurements {
   waistMax?: number;
 }
 
+/** How a measurement value was sourced */
+export type MeasurementTier =
+  | 'garment' // Tier 1: actual garment measurement from size chart
+  | 'body' // Tier 2: body measurement (not usable for fit analysis)
+  | 'labeled' // Tier 3: from labeled selector (e.g., 35W) — approximate
+  | 'unavailable'; // Tier 4: not available on page
+
 /** Garment measurements extracted from product page, keyed by size. */
 export interface GarmentMeasurements {
   type: 'top' | 'bottom';
@@ -45,6 +52,19 @@ export interface ExtractionResult {
   fabricInfo?: string;
   brandFitNotes?: string;
   rawConfidence?: string;
+
+  // For jeans-style products with waist × length selectors
+  sizingFormat?: 'standard' | 'waist-length';
+
+  // Available labeled options (only present when sizingFormat is 'waist-length')
+  labeledWaistOptions?: number[];
+  labeledLengthOptions?: number[];
+
+  // Per-measurement tier info from extraction
+  measurementTiers?: Record<string, MeasurementTier>;
+
+  // Tier 2 callout — when body measurements were found
+  bodyMeasurementNote?: string;
 }
 
 /** Fit category with universal meaning from master tables. */
@@ -62,6 +82,8 @@ export interface MeasurementResult {
   callouts: string[];
   isApproximation: boolean;
   approximationNote?: string;
+  /** Present when scorecard assigns tier (Phase 8E-2). Optional for backwards compat. */
+  tier?: MeasurementTier;
 }
 
 /** Full scorecard for one size. */

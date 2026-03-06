@@ -23,6 +23,8 @@ function SidePanel() {
     useState<UserMeasurements | null>(null);
   const [availableSizes, setAvailableSizes] = useState<string[]>([]);
   const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedWaist, setSelectedWaist] = useState<number | null>(null);
+  const [selectedLength, setSelectedLength] = useState<number | null>(null);
 
   const handleMessage = useCallback(
     (
@@ -36,17 +38,23 @@ function SidePanel() {
           scorecard: ScorecardResult;
           availableSizes: string[];
           userMeasurements: UserMeasurements;
+          initialWaist?: number;
+          initialLength?: number;
         };
         setExtraction(data.extraction);
         setUserMeasurements(data.userMeasurements);
         setAvailableSizes(data.availableSizes);
         setScorecardData(data.scorecard);
         setSelectedSize(data.scorecard.size);
+        setSelectedWaist(data.initialWaist ?? null);
+        setSelectedLength(data.initialLength ?? null);
         setDisplayState('results');
         setErrorMessage('');
       } else if (message.action === 'showLoading') {
         setDisplayState('loading');
         setScorecardData(null);
+        setSelectedWaist(null);
+        setSelectedLength(null);
         setErrorMessage('');
       } else if (message.action === 'showError' && message.message) {
         setDisplayState('error');
@@ -78,6 +86,38 @@ function SidePanel() {
     [extraction, userMeasurements]
   );
 
+  const handleWaistChange = useCallback(
+    (waist: number) => {
+      if (!extraction || !userMeasurements) return;
+      setSelectedWaist(waist);
+      const newScorecard = generateScorecard(
+        extraction,
+        userMeasurements,
+        'default',
+        waist,
+        selectedLength ?? undefined
+      );
+      setScorecardData(newScorecard);
+    },
+    [extraction, userMeasurements, selectedLength]
+  );
+
+  const handleLengthChange = useCallback(
+    (length: number) => {
+      if (!extraction || !userMeasurements) return;
+      setSelectedLength(length);
+      const newScorecard = generateScorecard(
+        extraction,
+        userMeasurements,
+        'default',
+        selectedWaist ?? undefined,
+        length
+      );
+      setScorecardData(newScorecard);
+    },
+    [extraction, userMeasurements, selectedWaist]
+  );
+
   if (displayState === 'idle') {
     return (
       <div className="p-4 text-sm text-gray-600">
@@ -104,23 +144,73 @@ function SidePanel() {
   const data = scorecardData;
   if (!data) return null;
 
+  const isWaistLength = extraction?.sizingFormat === 'waist-length';
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="border-b border-gray-200 pb-3">
         <h1 className="text-lg font-semibold">
           {data.garmentSubType.charAt(0).toUpperCase() +
-            data.garmentSubType.slice(1)}{' '}
-          — Size {data.size}
+            data.garmentSubType.slice(1)}
+          {isWaistLength && selectedWaist != null && selectedLength != null
+            ? ` — ${selectedWaist}W × ${selectedLength}L`
+            : ` — Size ${data.size}`}
         </h1>
       </div>
 
-      <SizeSelector
-        sizes={availableSizes}
-        selectedSize={selectedSize}
-        onSizeChange={handleSizeChange}
-      />
+      {isWaistLength && extraction ? (
+        <div>
+          <div className="mb-3">
+            <div className="text-xs text-gray-500 mb-1">Waist</div>
+            <div className="flex flex-wrap gap-1.5">
+              {extraction.labeledWaistOptions?.map((w) => (
+                <button
+                  key={w}
+                  type="button"
+                  onClick={() => handleWaistChange(w)}
+                  className={`px-3 py-1.5 text-sm rounded border ${
+                    selectedWaist === w
+                      ? 'bg-gray-900 text-white border-gray-900'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  {w}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mb-3">
+            <div className="text-xs text-gray-500 mb-1">Length</div>
+            <div className="flex flex-wrap gap-1.5">
+              {extraction.labeledLengthOptions?.map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => handleLengthChange(l)}
+                  className={`px-3 py-1.5 text-sm rounded border ${
+                    selectedLength === l
+                      ? 'bg-gray-900 text-white border-gray-900'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <SizeSelector
+          sizes={availableSizes}
+          selectedSize={selectedSize}
+          onSizeChange={handleSizeChange}
+        />
+      )}
 
-      <ScorecardTable result={data} />
+      <ScorecardTable
+        result={data}
+        bodyMeasurementNote={extraction?.bodyMeasurementNote}
+      />
 
       <CalloutsSection
         measurements={data.measurements}
