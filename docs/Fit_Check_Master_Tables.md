@@ -490,7 +490,7 @@ Leg opening is best interpreted alongside thigh to understand how volume is dist
 ## SPECIAL PROCESSING LOGIC
 
 ### Hip Shelf Rise Adjustment
-Applied when user indicates they wear pants at their hip shelf AND garment is a bottom.
+Applied by default for all bottoms. Most modern casual pants are worn at the hip shelf rather than the anatomical natural waist, so this adjustment reflects typical wearing behavior. A future version may allow users to disable this if they wear pants at their natural waist.
 
 When a garment has a longer rise than baseline, the crotch point sits lower on the body. This means the inseam effectively acts longer — the hem will land lower than the raw inseam number suggests.
 

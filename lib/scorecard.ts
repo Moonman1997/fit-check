@@ -103,6 +103,13 @@ function addTier(
   return { ...m, tier: getTier(extraction, measurementName) };
 }
 
+function isTierBody(
+  extraction: ExtractionResult,
+  measurementKey: string
+): boolean {
+  return extraction.measurementTiers?.[measurementKey] === 'body';
+}
+
 function collectValues<K extends keyof TopMeasurements | keyof BottomMeasurements>(
   sizes: Record<string, TopMeasurements | BottomMeasurements>,
   key: K
@@ -150,7 +157,7 @@ export function generateScorecard(
   if (extraction.garmentType === 'top') {
     const sizeMeasurements = sizeData as TopMeasurements;
 
-    if (sizeMeasurements.chest != null) {
+    if (sizeMeasurements.chest != null && !isTierBody(extraction, 'chest')) {
       const chestValues = collectValues(extraction.sizes, 'chest');
       const isFlat =
         detectFlatOrCircumference(chestValues, 'chest') === 'flat';
@@ -175,7 +182,7 @@ export function generateScorecard(
       );
     }
 
-    if (sizeMeasurements.shoulder != null) {
+    if (sizeMeasurements.shoulder != null && !isTierBody(extraction, 'shoulder')) {
       const shoulderDiff = calculateShoulder(
         sizeMeasurements.shoulder,
         userMeasurements.shoulderWidth
@@ -196,7 +203,7 @@ export function generateScorecard(
       );
     }
 
-    if (sizeMeasurements.sleeveLength != null) {
+    if (sizeMeasurements.sleeveLength != null && !isTierBody(extraction, 'sleeveLength')) {
       const garmentShoulder =
         sizeMeasurements.shoulder ?? userMeasurements.shoulderWidth;
       const shoulderAdjustment = calculateShoulderAdjustment(
@@ -241,7 +248,7 @@ export function generateScorecard(
       );
     }
 
-    if (sizeMeasurements.frontLength != null) {
+    if (sizeMeasurements.frontLength != null && !isTierBody(extraction, 'frontLength')) {
       const { normalizedDiff } = calculateFrontLength(
         sizeMeasurements.frontLength,
         userMeasurements.height,
@@ -289,7 +296,10 @@ export function generateScorecard(
       );
     }
 
-    if (defaultMeasurements.thigh != null) {
+    if (
+      defaultMeasurements.thigh != null &&
+      !isTierBody(extraction, 'thigh')
+    ) {
       const thighValues = collectValues(extraction.sizes, 'thigh');
       const thighIsFlat =
         detectFlatOrCircumference(thighValues, 'thigh') === 'flat';
@@ -349,7 +359,10 @@ export function generateScorecard(
       );
     }
 
-    if (defaultMeasurements.frontRise != null) {
+    if (
+      defaultMeasurements.frontRise != null &&
+      !isTierBody(extraction, 'frontRise')
+    ) {
       measurements.push(
         addTier(
           {
@@ -368,7 +381,9 @@ export function generateScorecard(
 
     if (
       defaultMeasurements.legOpening != null &&
-      defaultMeasurements.thigh != null
+      defaultMeasurements.thigh != null &&
+      !isTierBody(extraction, 'legOpening') &&
+      !isTierBody(extraction, 'thigh')
     ) {
       const ltr = calculateLegOpeningRatio(
         defaultMeasurements.legOpening,
@@ -399,7 +414,7 @@ export function generateScorecard(
       sizeMeasurements.waistMin != null &&
       sizeMeasurements.waistMax != null;
 
-    if (hasElasticWaist) {
+    if (hasElasticWaist && !isTierBody(extraction, 'waist')) {
       const { position, belowRange, aboveRange } = calculateWaistElastic(
         userMeasurements.waist,
         sizeMeasurements.waistMin!,
@@ -424,7 +439,7 @@ export function generateScorecard(
           'Waist'
         )
       );
-    } else if (sizeMeasurements.waist != null) {
+    } else if (sizeMeasurements.waist != null && !isTierBody(extraction, 'waist')) {
       const waistValues = collectValues(extraction.sizes, 'waist');
       const isFlat =
         detectFlatOrCircumference(waistValues, 'waist') === 'flat';
@@ -452,7 +467,7 @@ export function generateScorecard(
       );
     }
 
-    if (sizeMeasurements.thigh != null) {
+    if (sizeMeasurements.thigh != null && !isTierBody(extraction, 'thigh')) {
       const thighValues = collectValues(extraction.sizes, 'thigh');
       const isFlat =
         detectFlatOrCircumference(thighValues, 'thigh') === 'flat';
@@ -492,7 +507,7 @@ export function generateScorecard(
       inseamIsApproximation = true;
     }
 
-    if (inseamValue != null) {
+    if (inseamValue != null && !isTierBody(extraction, 'inseam')) {
       const effectiveInseam =
         sizeMeasurements.frontRise != null
           ? applyHipShelfRiseAdjustment(inseamValue, sizeMeasurements.frontRise)
@@ -528,7 +543,7 @@ export function generateScorecard(
       );
     }
 
-    if (sizeMeasurements.frontRise != null) {
+    if (sizeMeasurements.frontRise != null && !isTierBody(extraction, 'frontRise')) {
       measurements.push(
         addTier(
           {
@@ -547,7 +562,9 @@ export function generateScorecard(
 
     if (
       sizeMeasurements.legOpening != null &&
-      sizeMeasurements.thigh != null
+      sizeMeasurements.thigh != null &&
+      !isTierBody(extraction, 'legOpening') &&
+      !isTierBody(extraction, 'thigh')
     ) {
       const ltr = calculateLegOpeningRatio(
         sizeMeasurements.legOpening,

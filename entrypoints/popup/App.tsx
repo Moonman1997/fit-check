@@ -17,8 +17,7 @@ function App() {
       try {
         const exists = await hasMeasurements();
         setMeasurementsExist(exists);
-      } catch (err) {
-        console.error(err);
+      } catch {
         setMeasurementsExist(false);
       } finally {
         setLoading(false);
@@ -38,7 +37,7 @@ function App() {
         setError('Something went wrong. Try again.');
         return;
       }
-      const chromeApi = typeof chrome !== 'undefined' ? chrome : undefined;
+      const chromeApi = (globalThis as any).chrome;
       if (chromeApi?.sidePanel?.open) {
         await chromeApi.sidePanel.open({ tabId: tab.id });
       }

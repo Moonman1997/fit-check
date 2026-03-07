@@ -69,8 +69,7 @@ function MeasurementForm() {
         if (stored) {
           setValues(stored);
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
         setErrorMessage('Could not load measurements.');
       } finally {
         setLoaded(true);
@@ -107,8 +106,7 @@ function MeasurementForm() {
     try {
       await saveUserMeasurements(values);
       setSuccessMessage(true);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setErrorMessage('Could not save measurements. Please try again.');
     }
   }

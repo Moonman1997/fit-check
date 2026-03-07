@@ -61,10 +61,6 @@ export default defineBackground(() => {
               screenshotBase64,
               pageData.html
             );
-            console.log(
-              'Extraction result:',
-              JSON.stringify(extraction, null, 2)
-            );
 
             const sizes = getAvailableSizes(extraction);
             if (sizes.length === 0) {
@@ -133,7 +129,6 @@ export default defineBackground(() => {
           } catch (err) {
             const message =
               err instanceof Error ? err.message : String(err);
-            console.error('Extraction failed:', err);
             browser.runtime.sendMessage({
               action: 'showError',
               message,
