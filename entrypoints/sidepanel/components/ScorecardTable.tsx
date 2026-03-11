@@ -91,11 +91,7 @@ function InfoIcon({ measurementKey, isExpanded, onToggle }: InfoIconProps) {
     <button
       type="button"
       onClick={onToggle}
-      className={`ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] transition-colors ${
-        isExpanded
-          ? 'border-gray-500 bg-gray-500 text-white'
-          : 'border border-gray-300 bg-gray-100 text-gray-500 hover:bg-gray-200'
-      }`}
+      className="ml-1 w-[15px] h-[15px] rounded-full border border-[#E8E6E3] inline-flex items-center justify-center text-[9px] text-[#9CA3AF] hover:border-[#5B7B94] hover:text-[#5B7B94] transition-colors cursor-pointer"
       aria-label="Measurement info"
       aria-expanded={isExpanded}
     >
@@ -113,25 +109,27 @@ function DescriptionExpand({ measurementKey }: DescriptionExpandProps) {
   if (!description) return null;
 
   return (
-    <div className="mt-2 space-y-2 border-t border-gray-100 pt-2 text-xs">
-      <div>
-        <div className="font-medium text-gray-700">What this means</div>
-        <p className="mt-0.5 text-gray-600">{description.whatThisMeans}</p>
+    <div className="mt-3 pt-3 border-t border-[#E8E6E3]">
+      <div className="text-[11px] uppercase tracking-[0.06em] text-[#5B7B94] font-medium mb-1">
+        What this means
       </div>
-      <div>
-        <div className="font-medium text-gray-700">
-          How this shows up in wear
-        </div>
-        <ul className="mt-0.5 list-inside list-disc space-y-0.5 text-gray-600">
-          {description.howThisShowsUpInWear.map((item, i) => (
-            <li key={i}>{item}</li>
-          ))}
-        </ul>
+      <p className="text-[12.5px] text-[#6B7280] leading-relaxed">
+        {description.whatThisMeans}
+      </p>
+      <div className="text-[11px] uppercase tracking-[0.06em] text-[#5B7B94] font-medium mb-1 mt-3">
+        How this shows up in wear
       </div>
-      <div>
-        <div className="font-medium text-gray-700">Context</div>
-        <p className="mt-0.5 text-gray-600">{description.context}</p>
+      <ul className="list-disc list-inside space-y-0.5 text-[12.5px] text-[#6B7280] leading-relaxed">
+        {description.howThisShowsUpInWear.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+      <div className="text-[11px] uppercase tracking-[0.06em] text-[#5B7B94] font-medium mb-1 mt-3">
+        Context
       </div>
+      <p className="text-[12.5px] text-[#6B7280] leading-relaxed">
+        {description.context}
+      </p>
     </div>
   );
 }
@@ -172,11 +170,9 @@ function ScorecardTable({ result, bodyMeasurementNote }: ScorecardTableProps) {
   return (
     <div className="space-y-2">
       {bodyMeasurementNote && (
-        <div className="rounded border border-amber-200 bg-amber-50 p-3">
-          <div className="flex items-start gap-2">
-            <span className="text-amber-600 font-medium shrink-0">Note</span>
-            <p className="text-xs text-amber-800">{bodyMeasurementNote}</p>
-          </div>
+        <div className="mb-4 py-2.5 px-3.5 bg-[#F7F5F0] rounded-md border-l-[3px] border-l-[#5B7B94] text-[12px] leading-relaxed text-[#6B7280]">
+          <span className="font-medium text-[#1A1A1A]">Note: </span>
+          {bodyMeasurementNote}
         </div>
       )}
       {rows.map((row) => {
@@ -189,10 +185,12 @@ function ScorecardTable({ result, bodyMeasurementNote }: ScorecardTableProps) {
           return (
             <div
               key={name}
-              className="rounded border border-gray-200 bg-white p-3"
+              className="bg-[#FCFCFB] border border-dashed border-[#E8E6E3] rounded-lg p-3.5 mb-2 shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
             >
               <div className="flex items-center gap-0.5">
-                <span className="font-medium text-gray-900">{name}</span>
+                <span className="text-[13px] font-medium text-[#1A1A1A]">
+                  {name}
+                </span>
                 {descKey && (
                   <InfoIcon
                     measurementKey={descKey}
@@ -201,11 +199,11 @@ function ScorecardTable({ result, bodyMeasurementNote }: ScorecardTableProps) {
                   />
                 )}
               </div>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="text-[13px] text-[#9CA3AF] italic">
                 Not provided by brand
               </p>
               {row.impact && (
-                <p className="mt-0.5 text-xs text-gray-400">{row.impact}</p>
+                <p className="text-[11.5px] text-[#9CA3AF] mt-0.5">{row.impact}</p>
               )}
               {isDescExpanded && descKey && (
                 <DescriptionExpand measurementKey={descKey} />
@@ -225,60 +223,54 @@ function ScorecardTable({ result, bodyMeasurementNote }: ScorecardTableProps) {
         return (
           <div
             key={name}
-            className="rounded border border-gray-200 bg-white p-3"
+            className="bg-white border border-[#E8E6E3] rounded-lg p-3.5 mb-2 shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-shadow"
           >
             <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-0.5">
-                  <span className="font-medium text-gray-900">{name}</span>
-                  {descKey && (
-                    <InfoIcon
-                      measurementKey={descKey}
-                      isExpanded={isDescExpanded}
-                      onToggle={() => toggleDescription(name)}
-                    />
-                  )}
-                </div>
-                <p className="mt-1 text-sm text-gray-700">{primaryText}</p>
-                {m.tier === 'labeled' && m.approximationNote && (
-                  <p className="mt-1 text-xs text-gray-500">
-                    {m.approximationNote}
-                  </p>
-                )}
-                {name === 'Front Length' && (
-                  <p className="mt-1 text-xs text-gray-500">
-                    Front length is measured relative to the waistband. Most
-                    modern casual tops fall in the Extended or Longline range.
-                  </p>
-                )}
-                {isDescExpanded && descKey && (
-                  <DescriptionExpand measurementKey={descKey} />
-                )}
-                {isUniversalExpanded && (
-                  <p className="mt-2 border-t border-gray-100 pt-2 text-xs text-gray-500">
-                    {m.fitCategory.universalMeaning}
-                  </p>
+              <div className="flex items-center gap-0.5">
+                <span className="text-[13px] font-medium text-[#1A1A1A]">
+                  {name}
+                </span>
+                {descKey && (
+                  <InfoIcon
+                    measurementKey={descKey}
+                    isExpanded={isDescExpanded}
+                    onToggle={() => toggleDescription(name)}
+                  />
                 )}
               </div>
-              <div className="shrink-0 text-right text-xs text-gray-500">
+              <div className="shrink-0 text-right text-[12px] text-[#6B7280]">
                 {formatDelta(m)}
               </div>
             </div>
+            <p className="text-[14px] text-[#1A1A1A] leading-[1.45]">
+              {primaryText}
+            </p>
+            {m.tier === 'labeled' && m.approximationNote && (
+              <p className="text-[11.5px] text-[#9CA3AF] mt-1">
+                {m.approximationNote}
+              </p>
+            )}
+            {name === 'Front Length' && (
+              <p className="text-[11.5px] text-[#9CA3AF] mt-1">
+                Front length is measured relative to the waistband. Most
+                modern casual tops fall in the Extended or Longline range.
+              </p>
+            )}
             <button
               type="button"
               onClick={() => toggleUniversal(name)}
-              className="mt-2 flex items-center gap-0.5 text-xs text-gray-500 hover:text-gray-700"
+              className="text-[12px] text-[#5B7B94] cursor-pointer hover:underline mt-1.5"
             >
-              {isUniversalExpanded ? (
-                <>
-                  <span className="text-gray-400">▼</span> Less
-                </>
-              ) : (
-                <>
-                  <span className="text-gray-400">▶</span> More
-                </>
-              )}
+              {isUniversalExpanded ? 'Less' : 'More'}
             </button>
+            {isUniversalExpanded && (
+              <p className="text-[13px] text-[#6B7280] leading-relaxed mt-2 pt-2 border-t border-[#E8E6E3]">
+                {m.fitCategory.universalMeaning}
+              </p>
+            )}
+            {isDescExpanded && descKey && (
+              <DescriptionExpand measurementKey={descKey} />
+            )}
           </div>
         );
       })}

@@ -12,8 +12,14 @@ import SizeSelector from './components/SizeSelector.tsx';
 
 type DisplayState = 'idle' | 'loading' | 'results' | 'error';
 
+const SIZE_BUTTON_BASE =
+  'px-3.5 py-1.5 text-[13px] font-medium border rounded-md transition-colors';
+const SIZE_BUTTON_DEFAULT =
+  'border-[#E8E6E3] bg-white text-[#6B7280] hover:border-[#5B7B94] hover:text-[#5B7B94]';
+const SIZE_BUTTON_ACTIVE = 'bg-[#5B7B94] border-[#5B7B94] text-white';
+
 function SidePanel() {
-  const [displayState, setDisplayState] = useState<DisplayState>('idle');
+  const [displayState, setDisplayState] = useState<DisplayState>('loading');
   const [scorecardData, setScorecardData] = useState<ScorecardResult | null>(
     null
   );
@@ -118,26 +124,32 @@ function SidePanel() {
     [extraction, userMeasurements, selectedWaist]
   );
 
-  if (displayState === 'idle') {
+  if (displayState === 'idle' || displayState === 'loading') {
     return (
-      <div className="p-4 text-sm text-gray-600">
-        Navigate to a product page and click Analyze This Page
-      </div>
-    );
-  }
-
-  if (displayState === 'loading') {
-    return (
-      <div className="flex flex-col items-center justify-center p-8 text-gray-500">
-        <div className="mb-2 h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
-        <p>Analyzing...</p>
+      <div className="flex flex-col items-center justify-center py-20 px-8 text-center">
+        <div style={{ fontFamily: 'var(--fc-serif)' }} className="text-xl text-[#1A1A1A] mb-5">
+          Fit Check
+        </div>
+        <div className="w-28 h-0.5 bg-[#E8E6E3] rounded-full overflow-hidden mb-3 relative">
+          <div className="absolute h-full w-2/5 bg-[#5B7B94] rounded-full animate-slide" />
+        </div>
+        <div className="text-[12.5px] text-[#9CA3AF] tracking-wide">
+          Analyzing measurements…
+        </div>
       </div>
     );
   }
 
   if (displayState === 'error') {
     return (
-      <div className="p-4 text-sm text-red-600">{errorMessage}</div>
+      <div className="flex flex-col items-center justify-center py-20 px-8 text-center">
+        <div style={{ fontFamily: 'var(--fc-serif)' }} className="text-xl text-[#1A1A1A] mb-3">
+          Fit Check
+        </div>
+        <div className="text-[13.5px] text-red-600 leading-relaxed">
+          {errorMessage}
+        </div>
+      </div>
     );
   }
 
@@ -145,33 +157,36 @@ function SidePanel() {
   if (!data) return null;
 
   const isWaistLength = extraction?.sizingFormat === 'waist-length';
+  const garmentSubType =
+    data.garmentSubType.charAt(0).toUpperCase() + data.garmentSubType.slice(1);
+  const sizeLabel =
+    isWaistLength && selectedWaist != null && selectedLength != null
+      ? `${selectedWaist}W × ${selectedLength}L`
+      : `Size ${data.size}`;
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <div className="border-b border-gray-200 pb-3">
-        <h1 className="text-lg font-semibold">
-          {data.garmentSubType.charAt(0).toUpperCase() +
-            data.garmentSubType.slice(1)}
-          {isWaistLength && selectedWaist != null && selectedLength != null
-            ? ` — ${selectedWaist}W × ${selectedLength}L`
-            : ` — Size ${data.size}`}
-        </h1>
+    <div className="flex flex-col gap-3 px-5 py-5">
+      <div
+        style={{ fontFamily: 'var(--fc-serif)' }}
+        className="text-[22px] text-[#1A1A1A] mb-3 tracking-[0.01em]"
+      >
+        {garmentSubType} — {sizeLabel}
       </div>
 
       {isWaistLength && extraction ? (
         <div>
           <div className="mb-3">
-            <div className="text-xs text-gray-500 mb-1">Waist</div>
+            <div className="text-[11px] uppercase tracking-[0.06em] text-[#9CA3AF] font-medium mb-1.5">
+              Waist
+            </div>
             <div className="flex flex-wrap gap-1.5">
               {extraction.labeledWaistOptions?.map((w) => (
                 <button
                   key={w}
                   type="button"
                   onClick={() => handleWaistChange(w)}
-                  className={`px-3 py-1.5 text-sm rounded border ${
-                    selectedWaist === w
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                  className={`${SIZE_BUTTON_BASE} ${
+                    selectedWaist === w ? SIZE_BUTTON_ACTIVE : SIZE_BUTTON_DEFAULT
                   }`}
                 >
                   {w}
@@ -180,17 +195,17 @@ function SidePanel() {
             </div>
           </div>
           <div className="mb-3">
-            <div className="text-xs text-gray-500 mb-1">Length</div>
+            <div className="text-[11px] uppercase tracking-[0.06em] text-[#9CA3AF] font-medium mb-1.5">
+              Length
+            </div>
             <div className="flex flex-wrap gap-1.5">
               {extraction.labeledLengthOptions?.map((l) => (
                 <button
                   key={l}
                   type="button"
                   onClick={() => handleLengthChange(l)}
-                  className={`px-3 py-1.5 text-sm rounded border ${
-                    selectedLength === l
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                  className={`${SIZE_BUTTON_BASE} ${
+                    selectedLength === l ? SIZE_BUTTON_ACTIVE : SIZE_BUTTON_DEFAULT
                   }`}
                 >
                   {l}
@@ -218,7 +233,7 @@ function SidePanel() {
       />
 
       {(data.fabricInfo || data.brandFitNotes) && (
-        <div className="border-t border-gray-200 pt-3 text-xs text-gray-500">
+        <div className="border-t border-[#E8E6E3] pt-3 text-[12px] text-[#6B7280]">
           {data.fabricInfo && (
             <div>Fabric: {data.fabricInfo}</div>
           )}

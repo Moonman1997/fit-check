@@ -1,9 +1,36 @@
 @import "tailwindcss";
 
+:root {
+  --fc-accent: #5B7B94;
+  --fc-accent-hover: #4D6B82;
+  --fc-accent-light: #EDF1F5;
+  --fc-bg: #F8F7F5;
+  --fc-card: #FFFFFF;
+  --fc-text: #1A1A1A;
+  --fc-text-secondary: #6B7280;
+  --fc-text-muted: #9CA3AF;
+  --fc-border: #E8E6E3;
+  --fc-shadow: rgba(0, 0, 0, 0.06);
+  --fc-serif: 'DM Serif Display', Georgia, serif;
+  --fc-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
-  background-color: #ffffff;
-  color: #213547;
+  font-family: var(--fc-sans);
+  color: var(--fc-text);
+}
+
+body {
+  background-color: var(--fc-bg);
+}
+
+@keyframes slide {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}
+.animate-slide {
+  animation: slide 1.2s ease-in-out infinite;
 }
