@@ -6,44 +6,23 @@ const FIELDS: {
   key: keyof UserMeasurements;
   label: string;
   helperText: string;
+  colSpan?: number;
 }[] = [
-  {
-    key: 'height',
-    label: 'Height',
-    helperText: 'Your total height in inches (e.g., 70 for 5\'10")',
-  },
-  {
-    key: 'inseam',
-    label: 'Inseam',
-    helperText: 'Crotch seam to ankle bone along inner leg',
-  },
-  {
-    key: 'chest',
-    label: 'Chest',
-    helperText: 'Around the fullest part of your chest, under arms',
-  },
-  {
-    key: 'waist',
-    label: 'Waist',
-    helperText: 'Around your natural waist at the navel',
-  },
-  {
-    key: 'thigh',
-    label: 'Thigh',
-    helperText: 'Around the fullest part of one thigh',
-  },
+  { key: 'height', label: 'Height', helperText: 'Your total height (e.g., 70 for 5\'10")' },
+  { key: 'chest', label: 'Chest', helperText: 'Around the fullest part of your chest, under arms' },
   {
     key: 'shoulderWidth',
     label: 'Shoulder Width',
-    helperText:
-      'Point to point across your back, from one shoulder edge to the other',
+    helperText: 'Point to point across your back, from one shoulder edge to the other',
   },
   {
     key: 'sleeveLength',
     label: 'Sleeve Length',
-    helperText:
-      'Center-back of neck to wrist bone (tailor measurement)',
+    helperText: 'Center-back of neck to wrist bone (tailor measurement)',
   },
+  { key: 'waist', label: 'Waist', helperText: 'Around where you typically wear pants' },
+  { key: 'inseam', label: 'Inseam', helperText: 'Crotch seam to ankle bone along inner leg' },
+  { key: 'thigh', label: 'Thigh', helperText: 'Around the fullest part of one thigh', colSpan: 2 },
 ];
 
 const initialValues: UserMeasurements = {
@@ -113,18 +92,21 @@ function MeasurementForm() {
 
   if (!loaded) {
     return (
-      <div className="text-gray-500">Loading...</div>
+      <div className="text-[13px] text-[#9CA3AF]">Loading...</div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid gap-6 sm:grid-cols-2">
-        {FIELDS.map(({ key, label, helperText }) => (
-          <div key={key}>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        {FIELDS.map(({ key, label, helperText, colSpan }) => (
+          <div
+            key={key}
+            className={colSpan === 2 ? 'col-span-2' : ''}
+          >
             <label
               htmlFor={key}
-              className="mb-1 block text-sm font-medium"
+              className="text-[13px] font-medium text-[#1A1A1A] mb-1 block"
             >
               {label}
             </label>
@@ -135,24 +117,24 @@ function MeasurementForm() {
               min="0"
               value={values[key] || ''}
               onChange={(e) => handleChange(key, e.target.value)}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-gray-900 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+              className="w-full px-3 py-2.5 text-[14px] border border-[#E8E6E3] rounded-md bg-white focus:outline-none focus:border-[#5B7B94] transition-colors"
             />
-            <p className="mt-1 text-xs text-gray-500">{helperText}</p>
+            <p className="text-[11.5px] text-[#9CA3AF] mt-1">{helperText}</p>
           </div>
         ))}
       </div>
 
       {errorMessage && (
-        <p className="text-sm text-red-600">{errorMessage}</p>
+        <p className="text-[13px] text-red-600">{errorMessage}</p>
       )}
 
       {successMessage && (
-        <p className="text-sm text-green-600">Measurements saved!</p>
+        <p className="text-[13px] text-[#5B7B94] mt-2">Measurements saved!</p>
       )}
 
       <button
         type="submit"
-        className="w-full rounded bg-gray-900 px-4 py-2 font-medium text-white hover:bg-gray-800"
+        className="w-full py-3 bg-[#5B7B94] text-white text-[14px] font-medium rounded-md hover:bg-[#4D6B82] transition-colors tracking-[0.02em]"
       >
         Save Measurements
       </button>

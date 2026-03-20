@@ -40,18 +40,6 @@ function normalizeToGarmentType(subType: string): GarmentType | null {
     return 't-shirt';
   if (lower.includes('polo')) return 'polo';
   if (
-    lower.includes('button-up') ||
-    lower.includes('button up') ||
-    lower.includes('oxford') ||
-    lower.includes('flannel') ||
-    lower.includes('dress shirt') ||
-    (lower.includes('shirt') &&
-      !lower.includes('sweatshirt') &&
-      !lower.includes('t-shirt') &&
-      !lower.includes('tee'))
-  )
-    return 'button-up';
-  if (
     lower.includes('sweatshirt') ||
     lower.includes('hoodie') ||
     lower.includes('hoody') ||
@@ -84,6 +72,18 @@ function normalizeToGarmentType(subType: string): GarmentType | null {
     lower.includes('jacket')
   )
     return 'light-jacket';
+  if (
+    lower.includes('button-up') ||
+    lower.includes('button up') ||
+    lower.includes('oxford') ||
+    lower.includes('flannel') ||
+    lower.includes('dress shirt') ||
+    (lower.includes('shirt') &&
+      !lower.includes('sweatshirt') &&
+      !lower.includes('t-shirt') &&
+      !lower.includes('tee'))
+  )
+    return 'button-up';
   if (lower.includes('jeans') || lower.includes('denim')) return 'jeans';
   if (lower.includes('chinos') || lower.includes('chino')) return 'chinos';
   if (
