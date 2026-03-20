@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { measurementDescriptions } from '@/lib/descriptions';
 import { getGarmentDescription } from '@/lib/garment-descriptions';
 import type { MeasurementResult, ScorecardResult } from '@/lib/types';
+import FitSpectrum from './FitSpectrum.tsx';
 
 const MEASUREMENT_NAME_TO_KEY: Record<string, string> = {
   Chest: 'chest',
@@ -91,11 +92,15 @@ function InfoIcon({ measurementKey, isExpanded, onToggle }: InfoIconProps) {
     <button
       type="button"
       onClick={onToggle}
-      className="ml-1 w-[15px] h-[15px] rounded-full border border-[#E8E6E3] inline-flex items-center justify-center text-[9px] text-[#9CA3AF] hover:border-[#5B7B94] hover:text-[#5B7B94] transition-colors cursor-pointer"
+      className={`ml-1 w-[15px] h-[15px] rounded-full inline-flex items-center justify-center text-[9px] transition-colors cursor-pointer ${
+        isExpanded
+          ? 'bg-[#5B7B94] text-white border border-[#5B7B94]'
+          : 'border border-[#E8E6E3] text-[#9CA3AF] hover:border-[#5B7B94] hover:text-[#5B7B94]'
+      }`}
       aria-label="Measurement info"
       aria-expanded={isExpanded}
     >
-      ⓘ
+      {isExpanded ? '×' : 'ⓘ'}
     </button>
   );
 }
@@ -256,6 +261,12 @@ function ScorecardTable({ result, bodyMeasurementNote }: ScorecardTableProps) {
                 modern casual tops fall in the Extended or Longline range.
               </p>
             )}
+            <FitSpectrum
+              measurementName={name}
+              delta={m.delta}
+              category={m.fitCategory.category}
+              rawValue={m.garmentValue}
+            />
             <button
               type="button"
               onClick={() => toggleUniversal(name)}
