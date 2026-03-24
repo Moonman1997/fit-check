@@ -78,6 +78,18 @@ function SidePanel() {
     };
   }, [handleMessage]);
 
+  useEffect(() => {
+    if (displayState === 'loading' || displayState === 'idle') {
+      const timeout = setTimeout(() => {
+        setDisplayState('error');
+        setErrorMessage(
+          'Analysis is taking too long. Please refresh the page and try again.'
+        );
+      }, 25000);
+      return () => clearTimeout(timeout);
+    }
+  }, [displayState]);
+
   const handleSizeChange = useCallback(
     (newSize: string) => {
       if (!extraction || !userMeasurements) return;
@@ -146,9 +158,29 @@ function SidePanel() {
         <div style={{ fontFamily: 'var(--fc-serif)' }} className="text-xl text-[#1A1A1A] mb-3">
           Fit Check
         </div>
-        <div className="text-[13.5px] text-red-600 leading-relaxed">
+        <div className="text-[13.5px] text-red-600 leading-relaxed mb-4">
           {errorMessage}
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            void navigator.clipboard.writeText(errorMessage);
+          }}
+          className="text-[12px] text-[#5B7B94] border border-[#E8E6E3] rounded-md px-3 py-1.5 hover:bg-[#F8F7F5] transition-colors"
+        >
+          Copy error message
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setDisplayState('loading');
+            setErrorMessage('');
+            browser.runtime.sendMessage({ action: 'analyzePage' }).catch(() => {});
+          }}
+          className="text-[12px] text-white bg-[#5B7B94] rounded-md px-3 py-1.5 hover:bg-[#4D6B82] transition-colors mt-2"
+        >
+          Try again
+        </button>
       </div>
     );
   }

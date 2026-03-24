@@ -9,131 +9,162 @@ export default defineBackground(() => {
       _sender,
       sendResponse: (response: unknown) => void
     ) => {
+      if (message.action === 'ping') {
+        sendResponse({ status: 'ok' });
+        return false;
+      }
       if (message.action === 'analyzePage') {
         (async () => {
+          let analysisPromise: Promise<void> | undefined;
           try {
             browser.runtime.sendMessage({ action: 'showLoading' }).catch(() => {});
 
-            const [tab] = await browser.tabs.query({
-              active: true,
-              currentWindow: true,
-            });
-            if (!tab?.id) {
-              sendResponse({ status: 'error', message: 'No active tab found' });
-              return;
-            }
-
-            const userMeasurements = await getUserMeasurements();
-            if (!userMeasurements) {
-              const msg =
-                'No measurements saved. Open Fit Check settings to add your measurements.';
-              browser.runtime.sendMessage({
-                action: 'showError',
-                message: msg,
-              }).catch(() => {});
-              sendResponse({ status: 'error', message: msg });
-              return;
-            }
-
-            const dataUrl = await browser.tabs.captureVisibleTab({
-              format: 'png',
-            });
-            const screenshotBase64 = dataUrl.replace(
-              /^data:image\/png;base64,/,
-              ''
+            let analysisTimedOut = false;
+            const timeoutPromise = new Promise<never>((_, reject) =>
+              setTimeout(() => {
+                analysisTimedOut = true;
+                reject(new Error('TIMEOUT'));
+              }, 20000)
             );
 
-            const pageData = (await browser.tabs.sendMessage(tab.id, {
-              action: 'getPageData',
-            })) as { html: string; url: string; title: string };
-            if (!pageData?.html) {
-              const msg =
-                'Could not get page HTML. Ensure the content script is loaded.';
-              browser.runtime.sendMessage({
-                action: 'showError',
-                message: msg,
-              }).catch(() => {});
-              sendResponse({ status: 'error', message: msg });
-              return;
-            }
+            analysisPromise = (async () => {
+              const [tab] = await browser.tabs.query({
+                active: true,
+                currentWindow: true,
+              });
+              if (!tab?.id) {
+                throw new Error('No active tab found');
+              }
 
-            const extraction = await extractMeasurements(
-              screenshotBase64,
-              pageData.html
-            );
+              const userMeasurements = await getUserMeasurements();
+              if (!userMeasurements) {
+                throw new Error(
+                  'No measurements saved. Open Fit Check settings to add your measurements.'
+                );
+              }
 
-            const sizes = getAvailableSizes(extraction);
-            if (sizes.length === 0) {
-              const msg = 'No garment measurements found on this page.';
-              browser.runtime.sendMessage({
-                action: 'showError',
-                message: msg,
-              }).catch(() => {});
-              sendResponse({ status: 'error', message: msg });
-              return;
-            }
-
-            let scorecard: ReturnType<typeof generateScorecard>;
-            let initialWaist: number | undefined;
-            let initialLength: number | undefined;
-
-            if (extraction.sizingFormat === 'waist-length') {
-              const waistOpts = extraction.labeledWaistOptions ?? [];
-              const lengthOpts = extraction.labeledLengthOptions ?? [];
-              initialWaist =
-                waistOpts.length > 0
-                  ? waistOpts.reduce((a, b) =>
-                      Math.abs(a - userMeasurements.waist) <=
-                      Math.abs(b - userMeasurements.waist)
-                        ? a
-                        : b
-                    )
-                  : undefined;
-              initialLength =
-                lengthOpts.length > 0
-                  ? lengthOpts.reduce((a, b) =>
-                      Math.abs(a - userMeasurements.inseam) <=
-                      Math.abs(b - userMeasurements.inseam)
-                        ? a
-                        : b
-                    )
-                  : undefined;
-              scorecard = generateScorecard(
-                extraction,
-                userMeasurements,
-                'default',
-                initialWaist,
-                initialLength
+              const dataUrl = await browser.tabs.captureVisibleTab({
+                format: 'png',
+              });
+              const screenshotBase64 = dataUrl.replace(
+                /^data:image\/png;base64,/,
+                ''
               );
-            } else {
-              scorecard = generateScorecard(
-                extraction,
-                userMeasurements,
-                sizes[0]
+
+              const pageData = (await browser.tabs.sendMessage(tab.id, {
+                action: 'getPageData',
+              })) as { html: string; url: string; title: string };
+              if (!pageData?.html) {
+                throw new Error(
+                  'Could not get page HTML. Ensure the content script is loaded.'
+                );
+              }
+
+              const extraction = await extractMeasurements(
+                screenshotBase64,
+                pageData.html
               );
-            }
 
-            browser.runtime.sendMessage({
-              action: 'showResults',
-              data: {
-                extraction,
-                scorecard,
-                availableSizes: sizes,
-                userMeasurements,
-                initialWaist,
-                initialLength,
-              },
-            }).catch(() => {});
+              const sizes = getAvailableSizes(extraction);
+              if (sizes.length === 0) {
+                throw new Error('No garment measurements found on this page.');
+              }
 
-            sendResponse({ status: 'success', data: { extraction, scorecard } });
+              let scorecard: ReturnType<typeof generateScorecard>;
+              let initialWaist: number | undefined;
+              let initialLength: number | undefined;
+
+              if (extraction.sizingFormat === 'waist-length') {
+                const waistOpts = extraction.labeledWaistOptions ?? [];
+                const lengthOpts = extraction.labeledLengthOptions ?? [];
+                initialWaist =
+                  waistOpts.length > 0
+                    ? waistOpts.reduce((a, b) =>
+                        Math.abs(a - userMeasurements.waist) <=
+                        Math.abs(b - userMeasurements.waist)
+                          ? a
+                          : b
+                      )
+                    : undefined;
+                initialLength =
+                  lengthOpts.length > 0
+                    ? lengthOpts.reduce((a, b) =>
+                        Math.abs(a - userMeasurements.inseam) <=
+                        Math.abs(b - userMeasurements.inseam)
+                          ? a
+                          : b
+                      )
+                    : undefined;
+                scorecard = generateScorecard(
+                  extraction,
+                  userMeasurements,
+                  'default',
+                  initialWaist,
+                  initialLength
+                );
+              } else {
+                scorecard = generateScorecard(
+                  extraction,
+                  userMeasurements,
+                  sizes[0]
+                );
+              }
+
+              if (analysisTimedOut) {
+                return;
+              }
+
+              browser.runtime.sendMessage({
+                action: 'showResults',
+                data: {
+                  extraction,
+                  scorecard,
+                  availableSizes: sizes,
+                  userMeasurements,
+                  initialWaist,
+                  initialLength,
+                },
+              }).catch(() => {});
+
+              sendResponse({ status: 'success', data: { extraction, scorecard } });
+            })();
+
+            await Promise.race([analysisPromise, timeoutPromise]);
           } catch (err) {
-            const message =
+            void analysisPromise?.catch(() => {});
+            const errorMessage =
               err instanceof Error ? err.message : String(err);
+
+            let userMessage: string;
+            if (errorMessage === 'TIMEOUT') {
+              userMessage =
+                'Analysis timed out. Please refresh the page and try again.';
+            } else if (
+              errorMessage.includes('429') ||
+              errorMessage.includes('rate_limit')
+            ) {
+              userMessage = 'Rate limited. Please wait a minute and try again.';
+            } else if (
+              errorMessage.includes('400') ||
+              errorMessage.includes('401') ||
+              errorMessage.includes('API key')
+            ) {
+              userMessage =
+                'API configuration error. Please contact the developer.';
+            } else if (errorMessage.includes('No garment measurements')) {
+              userMessage = errorMessage;
+            } else if (errorMessage.includes('No measurements saved')) {
+              userMessage = errorMessage;
+            } else {
+              userMessage =
+                'Something went wrong. Please refresh the page and try again.';
+            }
+
             browser.runtime.sendMessage({
               action: 'showError',
-              message,
+              message: userMessage,
             }).catch(() => {});
-            sendResponse({ status: 'error', message });
+            sendResponse({ status: 'error', message: userMessage });
           }
         })();
         return true;

@@ -41,6 +41,12 @@ function App() {
       if (chromeApi?.sidePanel?.open) {
         await chromeApi.sidePanel.open({ tabId: tab.id });
       }
+      try {
+        await browser.runtime.sendMessage({ action: 'ping' });
+      } catch {
+        // Worker might not respond to ping, that's ok — the message itself wakes it
+      }
+      await new Promise((resolve) => setTimeout(resolve, 300));
       browser.runtime.sendMessage({ action: 'analyzePage' });
       window.close();
     } catch {
