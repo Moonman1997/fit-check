@@ -141,10 +141,9 @@ function DescriptionExpand({ measurementKey }: DescriptionExpandProps) {
 
 interface ScorecardTableProps {
   result: ScorecardResult;
-  bodyMeasurementNote?: string;
 }
 
-function ScorecardTable({ result, bodyMeasurementNote }: ScorecardTableProps) {
+function ScorecardTable({ result }: ScorecardTableProps) {
   const [expandedUniversal, setExpandedUniversal] = useState<Set<string>>(
     new Set()
   );
@@ -174,12 +173,6 @@ function ScorecardTable({ result, bodyMeasurementNote }: ScorecardTableProps) {
 
   return (
     <div className="space-y-2">
-      {bodyMeasurementNote && (
-        <div className="mb-4 py-2.5 px-3.5 bg-[#F7F5F0] rounded-md border-l-[3px] border-l-[#5B7B94] text-[12px] leading-relaxed text-[#6B7280]">
-          <span className="font-medium text-[#1A1A1A]">Note: </span>
-          {bodyMeasurementNote}
-        </div>
-      )}
       {rows.map((row) => {
         const name = row.isMissing ? row.name : row.data.measurementName;
         const descKey = MEASUREMENT_NAME_TO_KEY[name] ?? '';

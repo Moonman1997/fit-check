@@ -254,10 +254,55 @@ function SidePanel() {
         />
       )}
 
-      <ScorecardTable
-        result={data}
-        bodyMeasurementNote={extraction?.bodyMeasurementNote}
-      />
+      {extraction?.bodyMeasurementNote && userMeasurements && (
+        <div className="border-l-[3px] border-l-[#5B7B94] bg-[#F7F5F0] rounded-md p-3.5 mb-3">
+          <div className="text-[12px] text-[#1A1A1A] font-medium mb-1.5">
+            Body measurements detected
+          </div>
+          <div className="text-[11.5px] text-[#6B7280] leading-[1.5] mb-3">
+            Based on our analysis, this brand&apos;s chart shows recommended body dimensions rather than actual garment measurements. Fit Check requires garment measurements to analyze fit, so full analysis is not available for this chart. Here are your measurements to reference against their sizing.
+          </div>
+          <div className="flex flex-col gap-1.5">
+            {extraction.garmentType === 'top' ? (
+              <>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-[#9CA3AF]">Chest</span>
+                  <span className="text-[#1A1A1A] font-medium">{userMeasurements.chest}&quot;</span>
+                </div>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-[#9CA3AF]">Shoulder</span>
+                  <span className="text-[#1A1A1A] font-medium">{userMeasurements.shoulderWidth}&quot;</span>
+                </div>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-[#9CA3AF]">Sleeve</span>
+                  <span className="text-[#1A1A1A] font-medium">{userMeasurements.sleeveLength}&quot;</span>
+                </div>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-[#9CA3AF]">Height</span>
+                  <span className="text-[#1A1A1A] font-medium">{userMeasurements.height}&quot;</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-[#9CA3AF]">Waist</span>
+                  <span className="text-[#1A1A1A] font-medium">{userMeasurements.waist}&quot;</span>
+                </div>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-[#9CA3AF]">Inseam</span>
+                  <span className="text-[#1A1A1A] font-medium">{userMeasurements.inseam}&quot;</span>
+                </div>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-[#9CA3AF]">Thigh</span>
+                  <span className="text-[#1A1A1A] font-medium">{userMeasurements.thigh}&quot;</span>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      <ScorecardTable result={data} />
 
       <CalloutsSection
         measurements={data.measurements}
