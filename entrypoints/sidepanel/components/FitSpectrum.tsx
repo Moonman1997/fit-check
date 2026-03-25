@@ -199,7 +199,14 @@ function FitSpectrum({
         : 0.5;
   }
 
-  const dotPosition = Math.max(2, Math.min(98, (catIndex + withinRatio) * segmentWidth));
+  let dotPosition: number;
+  if (catIndex === 0) {
+    dotPosition = 2;
+  } else if (catIndex === categories.length - 1) {
+    dotPosition = 98;
+  } else {
+    dotPosition = Math.max(2, Math.min(98, (catIndex + withinRatio) * segmentWidth));
+  }
   const idx = catIndex;
 
   const tickPositions = Array.from({ length: N + 1 }, (_, i) => i * segmentWidth);
@@ -284,6 +291,9 @@ function FitSpectrum({
           const segLeft = i * segmentWidth;
           const segWidth = segmentWidth;
           const isCurrentSegment = i === idx;
+          const isExtremeSegment = i === 0 || i === N - 1;
+          const showPermanentCurrentLabel =
+            isCurrentSegment && !isExtremeSegment;
           return (
             <div
               key={`segment-${i}`}
@@ -298,7 +308,9 @@ function FitSpectrum({
               <div className="absolute inset-x-0 top-1 h-1.5 rounded-sm opacity-0 group-hover/seg:opacity-100 bg-[#5B7B94]/10 transition-opacity" />
               <div
                 className={`absolute pointer-events-none text-center ${
-                  isCurrentSegment ? 'opacity-100' : 'opacity-0 group-hover/seg:opacity-100 transition-opacity'
+                  showPermanentCurrentLabel
+                    ? 'opacity-100'
+                    : 'opacity-0 group-hover/seg:opacity-100 transition-opacity'
                 }`}
                 style={{
                   top: 'calc(100% + 4px)',
@@ -309,7 +321,9 @@ function FitSpectrum({
               >
                 <span
                   className={`text-[8px] leading-[1.1] ${
-                    isCurrentSegment ? 'text-[#5B7B94] font-medium' : 'text-[#6B7280]'
+                    showPermanentCurrentLabel
+                      ? 'text-[#5B7B94] font-medium'
+                      : 'text-[#6B7280]'
                   }`}
                   style={{
                     display: '-webkit-box',

@@ -22,6 +22,7 @@ export default defineBackground(() => {
             let analysisTimedOut = false;
             const timeoutPromise = new Promise<never>((_, reject) =>
               setTimeout(() => {
+                console.log('FITCHECK: Analysis timed out');
                 analysisTimedOut = true;
                 reject(new Error('TIMEOUT'));
               }, 20000)
@@ -35,6 +36,8 @@ export default defineBackground(() => {
               if (!tab?.id) {
                 throw new Error('No active tab found');
               }
+
+              console.log('FITCHECK: Analyze started', tab.url);
 
               const userMeasurements = await getUserMeasurements();
               if (!userMeasurements) {
@@ -63,6 +66,11 @@ export default defineBackground(() => {
               const extraction = await extractMeasurements(
                 screenshotBase64,
                 pageData.html
+              );
+
+              console.log(
+                'FITCHECK: Extraction result',
+                JSON.stringify(extraction, null, 2)
               );
 
               const sizes = getAvailableSizes(extraction);
@@ -110,6 +118,11 @@ export default defineBackground(() => {
                 );
               }
 
+              console.log(
+                'FITCHECK: Scorecard generated for size',
+                scorecard.size
+              );
+
               if (analysisTimedOut) {
                 return;
               }
@@ -125,6 +138,8 @@ export default defineBackground(() => {
                   initialLength,
                 },
               }).catch(() => {});
+
+              console.log('FITCHECK: Results sent to side panel');
 
               sendResponse({ status: 'success', data: { extraction, scorecard } });
             })();
@@ -159,6 +174,8 @@ export default defineBackground(() => {
               userMessage =
                 'Something went wrong. Please refresh the page and try again.';
             }
+
+            console.log('FITCHECK: Error', errorMessage);
 
             browser.runtime.sendMessage({
               action: 'showError',
