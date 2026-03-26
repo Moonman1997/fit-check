@@ -183,17 +183,26 @@ Do NOT repurpose values from other columns to fill in missing measurements. For 
 It is always better to omit a measurement than to extract the wrong value. Missing measurements are handled gracefully by the system. Wrong measurements damage user trust.
 
 For sleeves, determine the measurement type:
-
 sleeveMeasurementType: "shoulder-to-cuff" or "center-back-to-cuff"
-IMPORTANT: Many brands measure sleeves from center-back of neck to cuff, especially on size charts. Look for these indicators of center-back-to-cuff:
 
-Labels containing: "center back", "CB", "centre back", "from center", "from neck"
-Sleeve values that seem unusually long (typically 32-37 inches for center-back) compared to shoulder-to-cuff (typically 22-28 inches)
-Size charts where the sleeve column header mentions "center back" or similar
+Look at all sleeve values across all sizes and classify by majority:
+- If most sleeve values are 28 inches or under → set "shoulder-to-cuff"
+  for every size
+- If most sleeve values are 32 inches or over → set "center-back-to-cuff"
+  for every size
+- If no clear majority (most values fall between 28-32", or values are
+  split) → default to "shoulder-to-cuff" and note the ambiguity in
+  rawConfidence
 
+Secondary label signals (only use when majority rule produces no clear
+result):
+- "center back", "CB", "centre back", "from center", "from neck" →
+  center-back-to-cuff
+- Label says only "sleeve length" with no qualifier → use majority rule
+  above
 
-If the label just says "sleeve length" with no qualifier, check the values: if they are in the 30-38 inch range, they are almost certainly center-back-to-cuff measurements. If they are in the 20-28 inch range, they are almost certainly shoulder-to-cuff.
-When in doubt, default to "shoulder-to-cuff" but note this in rawConfidence.
+Set the same sleeveMeasurementType for every size — do not vary it
+per size.
 
 CONTEXTUAL INFO:
 

@@ -189,6 +189,9 @@ function SidePanel() {
   if (!data) return null;
 
   const isWaistLength = extraction?.sizingFormat === 'waist-length';
+  const hasGarmentMeasurements = Object.values(
+    extraction?.measurementTiers ?? {}
+  ).some((tier) => tier === 'garment' || tier === 'labeled');
   const garmentSubType =
     data.garmentSubType.charAt(0).toUpperCase() + data.garmentSubType.slice(1);
   const sizeLabel =
@@ -205,54 +208,56 @@ function SidePanel() {
         {garmentSubType} — {sizeLabel}
       </div>
 
-      {isWaistLength && extraction ? (
-        <div>
-          <div className="mb-3">
-            <div className="text-[11px] uppercase tracking-[0.06em] text-[#9CA3AF] font-medium mb-1.5">
-              Waist
+      {hasGarmentMeasurements &&
+        (isWaistLength && extraction ? (
+          <div>
+            <div className="mb-3">
+              <div className="text-[11px] uppercase tracking-[0.06em] text-[#9CA3AF] font-medium mb-1.5">
+                Waist
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {extraction.labeledWaistOptions?.map((w) => (
+                  <button
+                    key={w}
+                    type="button"
+                    onClick={() => handleWaistChange(w)}
+                    className={`${SIZE_BUTTON_BASE} ${
+                      selectedWaist === w ? SIZE_BUTTON_ACTIVE : SIZE_BUTTON_DEFAULT
+                    }`}
+                  >
+                    {w}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {extraction.labeledWaistOptions?.map((w) => (
-                <button
-                  key={w}
-                  type="button"
-                  onClick={() => handleWaistChange(w)}
-                  className={`${SIZE_BUTTON_BASE} ${
-                    selectedWaist === w ? SIZE_BUTTON_ACTIVE : SIZE_BUTTON_DEFAULT
-                  }`}
-                >
-                  {w}
-                </button>
-              ))}
+            <div className="mb-3">
+              <div className="text-[11px] uppercase tracking-[0.06em] text-[#9CA3AF] font-medium mb-1.5">
+                Length
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {extraction.labeledLengthOptions?.map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => handleLengthChange(l)}
+                    className={`${SIZE_BUTTON_BASE} ${
+                      selectedLength === l ? SIZE_BUTTON_ACTIVE : SIZE_BUTTON_DEFAULT
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="mb-3">
-            <div className="text-[11px] uppercase tracking-[0.06em] text-[#9CA3AF] font-medium mb-1.5">
-              Length
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {extraction.labeledLengthOptions?.map((l) => (
-                <button
-                  key={l}
-                  type="button"
-                  onClick={() => handleLengthChange(l)}
-                  className={`${SIZE_BUTTON_BASE} ${
-                    selectedLength === l ? SIZE_BUTTON_ACTIVE : SIZE_BUTTON_DEFAULT
-                  }`}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <SizeSelector
-          sizes={availableSizes}
-          selectedSize={selectedSize}
-          onSizeChange={handleSizeChange}
-        />
-      )}
+        ) : (
+          <SizeSelector
+            sizes={availableSizes}
+            selectedSize={selectedSize}
+            onSizeChange={handleSizeChange}
+          />
+        ))}
+
 
       {extraction?.bodyMeasurementNote && userMeasurements && (
         <div className="border-l-[3px] border-l-[#5B7B94] bg-[#F7F5F0] rounded-md p-3.5 mb-3">
@@ -302,22 +307,26 @@ function SidePanel() {
         </div>
       )}
 
-      <ScorecardTable result={data} />
+      {hasGarmentMeasurements && (
+        <>
+          <ScorecardTable result={data} />
 
-      <CalloutsSection
-        measurements={data.measurements}
-        garmentSubType={data.garmentSubType}
-      />
+          <CalloutsSection
+            measurements={data.measurements}
+            garmentSubType={data.garmentSubType}
+          />
 
-      {(data.fabricInfo || data.brandFitNotes) && (
-        <div className="border-t border-[#E8E6E3] pt-3 text-[12px] text-[#6B7280]">
-          {data.fabricInfo && (
-            <div>Fabric: {data.fabricInfo}</div>
+          {(data.fabricInfo || data.brandFitNotes) && (
+            <div className="border-t border-[#E8E6E3] pt-3 text-[12px] text-[#6B7280]">
+              {data.fabricInfo && (
+                <div>Fabric: {data.fabricInfo}</div>
+              )}
+              {data.brandFitNotes && (
+                <div>Fit notes: {data.brandFitNotes}</div>
+              )}
+            </div>
           )}
-          {data.brandFitNotes && (
-            <div>Fit notes: {data.brandFitNotes}</div>
-          )}
-        </div>
+        </>
       )}
     </div>
   );
